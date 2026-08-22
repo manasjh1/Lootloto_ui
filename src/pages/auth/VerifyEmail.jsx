@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import { resendVerification, verifyOtp } from "../../api/auth"
 
 export default function VerifyEmail() {
   const navigate = useNavigate()
@@ -49,21 +50,12 @@ export default function VerifyEmail() {
     setLoading(true)
     setError("")
     try {
-      const res = await fetch("http://localhost:8000/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email_id: email, otp: code }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        navigate("/login", { state: { verified: true } })
-      } else {
-        setError(data.detail || "Invalid OTP. Try again.")
-        setOtp(["", "", "", "", "", ""])
-        refs.current[0]?.focus()
-      }
-    } catch {
-      setError("Something went wrong. Try again.")
+      await verifyOtp({ email_id: email, otp: code })
+      navigate("/login", { state: { verified: true } })
+    } catch (err) {
+      setError(err.message || "Invalid OTP. Try again.")
+      setOtp(["", "", "", "", "", ""])
+      refs.current[0]?.focus()
     } finally {
       setLoading(false)
     }
@@ -72,11 +64,7 @@ export default function VerifyEmail() {
   async function handleResend() {
     setResending(true)
     try {
-      await fetch("http://localhost:8000/auth/resend-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(email),
-      })
+      await resendVerification(email)
       setTimer(60)
       setCanResend(false)
       setOtp(["", "", "", "", "", ""])

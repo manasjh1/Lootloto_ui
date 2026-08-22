@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
+  baseURL: "",
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 })
@@ -19,13 +19,14 @@ client.interceptors.response.use(
     if (err.response?.status === 401 && !original._retry) {
       original._retry = true
       try {
-        const { data } = await client.post("/auth/refresh")
+        const { data } = await client.post("/api/auth/refresh")
         localStorage.setItem("access_token", data.access_token)
         original.headers.Authorization = `Bearer ${data.access_token}`
         return client(original)
       } catch {
         localStorage.removeItem("access_token")
         window.location.href = "/login"
+        return Promise.reject(err)
       }
     }
     const msg = err.response?.data?.detail || err.message || "Something went wrong"
