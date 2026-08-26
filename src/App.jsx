@@ -9,13 +9,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/"             element={<Home />} />
         <Route path="/signup"       element={<Signup />} />
         <Route path="/login"        element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/" element={
-          <ProtectedRoute><Home /></ProtectedRoute>
-        } />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*"             element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

@@ -1,0 +1,47 @@
+@keyframes scroll-left { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+@keyframes drop-pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.06) rotate(-1deg);} }
+@keyframes drop-fall { 0%{transform:translateY(-5px) rotate(-8deg);} 50%{transform:translateY(6px) rotate(8deg);} 100%{transform:translateY(-5px) rotate(-8deg);} }
+@keyframes dot-pulse { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+@keyframes wiggle { 0%,100%{transform:rotate(-4deg);} 50%{transform:rotate(4deg);} }
+@keyframes wiggle-r { 0%,100%{transform:rotate(4deg);} 50%{transform:rotate(-4deg);} }
+@keyframes flag-sway { 0%,100%{transform:rotate(-2deg);} 50%{transform:rotate(2deg);} }
+@keyframes spin-slow { 0%{transform:rotate(0);} 100%{transform:rotate(360deg);} }
+@keyframes stamp-in { 0%{transform:scale(3) rotate(-30deg); opacity:0;} 60%{transform:scale(0.85) rotate(-14deg); opacity:1;} 100%{transform:scale(1) rotate(-14deg);} }
+@keyframes shimmer-bg { 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+@keyframes toast-in { 0%{transform:translateY(140%) rotate(-6deg);} 60%{transform:translateY(-8px) rotate(-2deg);} 100%{transform:translateY(0) rotate(-2deg);} }
+@keyframes toast-out { 0%{transform:translateY(0) rotate(-2deg);} 100%{transform:translateY(140%) rotate(-6deg);} }
+@keyframes float-y { 0%,100%{transform:translateY(0) rotate(var(--r,0deg));} 50%{transform:translateY(-8px) rotate(var(--r,0deg));} }
+@keyframes slogan-in { 0%{opacity:0; transform:translateY(10px) rotate(-1deg);} 100%{opacity:1; transform:translateY(0) rotate(0);} }
+
+.sticker-1 { transform: rotate(-14deg); animation: float-y 3.4s ease-in-out infinite; --r: -14deg; }
+.sticker-2 { transform: rotate(11deg); animation: float-y 3.8s ease-in-out infinite 0.4s; --r: 11deg; }
+.sticker-3 { transform: rotate(8deg); animation: float-y 3.2s ease-in-out infinite 0.9s; --r: 8deg; }
+.sticker-4 { transform: rotate(-9deg); animation: float-y 4s ease-in-out infinite 0.2s; --r: -9deg; }
+
+body {
+  margin: 0;
+  background-color: #181030;
+  color: #F7EEDD;
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #FFC94A;
+}
+
+#stage *::selection {
+  background: #FF7A1A;
+  color: #181030;
+}
+
+@media (max-width: 768px) {
+  .nav-links-hide {
+    display: none !important;
+  }
+}

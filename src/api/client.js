@@ -3,6 +3,7 @@ import axios from "axios"
 const client = axios.create({
   baseURL: "",
   withCredentials: true,
+  timeout: 3000,
   headers: { "Content-Type": "application/json" },
 })
 
@@ -16,17 +17,18 @@ client.interceptors.response.use(
   (res) => res,
   async (err) => {
     const original = err.config
-    if (err.response?.status === 401 && !original._retry) {
+    // Only attempt refresh for 401 on protected requests, avoid refresh loops on public endpoints
+    if (err.response?.status === 401 && !original._retry && !original.url?.includes("/auth/")) {
       original._retry = true
       try {
-        const { data } = await client.post("/api/auth/refresh")
-        localStorage.setItem("access_token", data.access_token)
-        original.headers.Authorization = `Bearer ${data.access_token}`
-        return client(original)
+        const { data } = await client.post("/api/auth/refresh", {}, { timeout: 2000 })
+        if (data?.access_token) {
+          localStorage.setItem("access_token", data.access_token)
+          original.headers.Authorization = `Bearer ${data.access_token}`
+          return client(original)
+        }
       } catch {
         localStorage.removeItem("access_token")
-        window.location.href = "/login"
-        return Promise.reject(err)
       }
     }
     const msg = err.response?.data?.detail || err.message || "Something went wrong"

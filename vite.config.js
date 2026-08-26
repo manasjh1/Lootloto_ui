@@ -5,8 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    host: "127.0.0.1", // Force IPv4-only — fixes macOS localhost pending issue
     proxy: {
-      "/auth": {
+      "/api": {
         target: "http://localhost:8000",
         changeOrigin: true,
       },
