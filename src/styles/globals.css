@@ -70,14 +70,10 @@ a:hover {
 .primary-cta { background: #ffc94a; color: #181030; border: 3px solid #181030; box-shadow: 5px 5px 0 #f0177b; }
 .secondary-cta { color: #f7eedd; border: 3px solid #f7eedd; }
 .hero-cart-wrap { position: relative; min-width: 0; }
-.thela-stage { position: relative; height: 490px; width: 100%; border: 1px solid rgba(255,201,74,.3); border-radius: 28px; background: #241a45; overflow: hidden; box-shadow: 10px 10px 0 #0f0a22; }
+.thela-stage { position: relative; height: 490px; width: 100%; overflow: hidden; cursor: grab; }
+.thela-stage:active { cursor: grabbing; }
 .thela-stage canvas { touch-action: none; }
-.thela-stage::before { content: 'SHANI BAZAR'; position: absolute; left: 24px; top: 20px; color: #ffc94a; font: 700 12px 'Space Mono', monospace; letter-spacing: 2px; z-index: 1; }
-.thela-label { position: absolute; right: 20px; top: 18px; color: #f7eedd; font: 700 10px 'Space Mono', monospace; letter-spacing: 1px; z-index: 1; opacity: .7; }
-.thela-hint { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: #ffc94a; font: 700 11px 'Space Mono', monospace; z-index: 1; }
-.cart-sticker { position: absolute; z-index: 2; font: 700 12px 'Space Mono', monospace; text-align: center; line-height: 1.15; padding: 13px 10px; border-radius: 50%; box-shadow: 4px 4px 0 rgba(0,0,0,.3); }
-.cart-sticker.sticker-1 { top: 8%; left: -18px; background: #f7eedd; color: #181030; border: 2px dashed #181030; }
-.cart-sticker.sticker-2 { right: -12px; bottom: 12%; background: #0b6e4f; color: #f7eedd; border: 2px dashed #f7eedd; }
+.thela-hint { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; color: rgba(247,238,221,.62); font: 700 10px 'Space Mono', monospace; z-index: 1; }
 @media (max-width: 800px) {
   .hero-section { grid-template-columns: 1fr; padding-top: 48px; min-height: auto; }
   .hero-copy { text-align: center; }

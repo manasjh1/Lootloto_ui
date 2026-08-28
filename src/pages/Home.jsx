@@ -355,8 +355,6 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-cart-wrap">
-          <span className="cart-sticker sticker-1">₹99<br />ONLY</span>
-          <span className="cart-sticker sticker-2">100%<br />DESI</span>
           <InteractiveThela />
         </div>
       </section>
