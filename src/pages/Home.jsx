@@ -41,7 +41,7 @@ export default function Home() {
   return (
     <main className="minimal-home">
       <header className="minimal-header">
-        <Link to="/" className="brand"><span className="brand-mark">LL</span><span>LOOTLOTO</span></Link>
+        <Link to="/" className="brand"><span className="brand-mark">LL</span><span>LootLooto</span></Link>
         <nav className="minimal-nav" aria-label="Main navigation"><a href="#products">New arrivals</a><a href="#products">Collections</a><a href="#products">Best sellers</a><a href="#about">About us</a></nav>
         <div className="header-actions"><button className="search-trigger" onClick={() => setSearchOpen(!searchOpen)} aria-expanded={searchOpen}>⌕ <span>Search</span></button>{isLoggedIn ? <button className="text-button" onClick={handleLogout}>{user?.email || "Account"}</button> : <Link className="text-button" to="/login">Account</Link>}<button className="bag-button" onClick={() => setCartCount((count) => count)} aria-label="Shopping bag">Bag ({cartCount})</button></div>
       </header>
@@ -50,7 +50,7 @@ export default function Home() {
       <section className="editorial-hero"><div className="hero-image hero-image-left" /><div className="hero-message"><p className="eyebrow">THE EVERYDAY EDIT</p><h1>Objects with<br /><em>a little feeling.</em></h1><p>Thoughtful, useful things for the way you live now. Made to be kept, gifted, and loved a little longer.</p><a className="quiet-link" href="#products">Explore the collection <span>→</span></a></div><div className="hero-image hero-image-right" /></section>
       <section className="category-row" id="about"><p>Made in India, found everywhere.</p><a href="#products">Shop all</a><p>Small-batch objects for slower days.</p></section>
       <section className="products-section" id="products"><div className="section-heading"><div><p className="eyebrow">A CONSIDERED COLLECTION</p><h2>New arrivals</h2></div><a className="quiet-link" href="#products">View all <span>→</span></a></div><div className="product-grid">{displayProducts.map((product) => <article className="product-card" key={product.id}><div className="product-image"><img src={product.image} alt={product.title} /><span>New arrival</span></div><div className="product-meta"><div><h3>{product.title}</h3><p>{product.subtitle || product.category || "Everyday objects"}</p></div><div className="product-price"><span>₹ {Number(product.price).toLocaleString("en-IN")}</span>{product.originalPrice && <del>₹ {Number(product.originalPrice).toLocaleString("en-IN")}</del>}</div></div><button className="add-button" onClick={() => setCartCount((count) => count + 1)}>Add to bag</button></article>)}</div></section>
-      <footer className="minimal-footer"><Link to="/" className="brand">LOOTLOTO</Link><p>Useful things, beautifully considered.</p><div><a href="#about">Our story</a><a href="#products">Contact</a><a href="#products">Instagram</a></div></footer>
+      <footer className="minimal-footer"><Link to="/" className="brand">LootLooto</Link><p>Useful things, beautifully considered.</p><div><a href="#about">Our story</a><a href="#products">Contact</a><a href="#products">Instagram</a></div></footer>
     </main>
   )
 }
