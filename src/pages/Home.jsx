@@ -40,7 +40,6 @@ export default function Home() {
 
   return (
     <main className="minimal-home">
-      <div className="announcement"><button aria-label="Previous announcement">‹</button><a href="#products">A little something nice for your everyday &nbsp;|&nbsp; Shop now</a><button aria-label="Next announcement">›</button></div>
       <header className="minimal-header">
         <Link to="/" className="brand"><span className="brand-mark">LL</span><span>LOOTLOTO</span></Link>
         <nav className="minimal-nav" aria-label="Main navigation"><a href="#products">New arrivals</a><a href="#products">Collections</a><a href="#products">Best sellers</a><a href="#about">About us</a></nav>
