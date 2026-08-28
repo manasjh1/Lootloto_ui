@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/authStore"
 import { logoutUser } from "../api/auth"
 import { getProducts } from "../api/products"
+import InteractiveThela from "../components/InteractiveThela"
 
 export default function Home() {
   const [cartCount, setCartCount] = useState(0)
@@ -341,63 +342,22 @@ export default function Home() {
       </nav>
 
       {/* HERO SECTION */}
-      <section style={{ position: "relative", padding: "90px 6% 110px", textAlign: "center", maxWidth: 1040, margin: "0 auto" }}>
-
-        {/* SVG Bunting String across hero */}
-        <svg width="100%" height="70" viewBox="0 0 1000 70" preserveAspectRatio="none" style={{ position: "absolute", top: 20, left: 0, right: 0, display: "block", pointerEvents: "none" }}>
-          <rect x="6" y="0" width="4" height="70" fill="#FFC94A" opacity="0.55" rx="2" />
-          <rect x="990" y="0" width="4" height="70" fill="#FFC94A" opacity="0.55" rx="2" />
-          <path d="M10 6 Q 500 68, 990 6" stroke="#FFC94A" strokeWidth="1.2" fill="none" opacity="0.55" strokeDasharray="2 4" />
-          <g id="buntingG">
-            {buntingItems.map((item) => (
-              <React.Fragment key={item.id}>
-                <line x1={item.cx} y1={item.sy - 2} x2={item.cx} y2={item.sy} stroke="#FFC94A" strokeWidth="0.8" opacity="0.6" />
-                {item.kind === 0 && (
-                  <polygon points={`${item.cx - 7},${item.sy} ${item.cx + 7},${item.sy} ${item.cx},${item.sy + 16}`} fill={item.color} opacity="0.95" />
-                )}
-                {item.kind === 1 && (
-                  <circle cx={item.cx} cy={item.sy + 9} r="5.5" fill={item.color} opacity="0.95" />
-                )}
-                {item.kind === 2 && (
-                  <rect x={item.cx - 5} y={item.sy + 1} width="10" height="15" rx="2" fill={item.color} opacity="0.95" />
-                )}
-              </React.Fragment>
-            ))}
-          </g>
-        </svg>
-
-        {/* Floating stickers */}
-        <span className="sticker-1" style={{ position: "absolute", top: "3%", left: "-1%", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 13, background: "#F7EEDD", color: "#181030", padding: "16px 12px", borderRadius: "50%", border: "2px dashed #181030", boxShadow: "4px 4px 0 rgba(0,0,0,0.35)", textAlign: "center", lineHeight: 1.15 }}>₹99<br />ONLY</span>
-        <span className="sticker-2" style={{ position: "absolute", top: "44%", right: "-2%", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 13, background: "#0B6E4F", color: "#F7EEDD", padding: "16px 12px", borderRadius: "50%", border: "2px dashed #F7EEDD", boxShadow: "4px 4px 0 rgba(0,0,0,0.35)", textAlign: "center", lineHeight: 1.15 }}>100%<br />DESI</span>
-        <span className="sticker-3" style={{ position: "absolute", bottom: "4%", left: "2%", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 13, background: "#F0177B", color: "#F7EEDD", padding: "16px 12px", borderRadius: "50%", border: "2px dashed #F7EEDD", boxShadow: "4px 4px 0 rgba(0,0,0,0.35)", textAlign: "center", lineHeight: 1.15 }}>NO<br />RETURNS*</span>
-        <span className="sticker-4" style={{ position: "absolute", bottom: "6%", right: "2%", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 12, background: "#7A5CFF", color: "#F7EEDD", padding: "12px 14px", borderRadius: 14, border: "2px solid #181030", boxShadow: "3px 3px 0 #FFC94A", textAlign: "center", lineHeight: 1.2 }}>JHOLA<br />APPROVED ✅</span>
-
-        {/* APPROVED Stamp */}
-        <div style={{ position: "absolute", bottom: "20%", left: "4%", fontFamily: "'Baloo 2'", fontWeight: 800, fontSize: 20, color: "#F0177B", border: "4px double #F0177B", padding: "6px 14px", borderRadius: 6, letterSpacing: 2, transform: "rotate(-14deg)", animation: "stamp-in 0.8s ease-out both 0.6s", textShadow: "1px 1px 0 rgba(240,23,123,0.2)", zIndex: 2 }}>AUNTY<br />APPROVED</div>
-
-        {/* Pin Note */}
-        <div style={{ position: "absolute", top: "1%", right: "-1%", background: "#FFC94A", color: "#181030", padding: "14px 16px 16px", transform: "rotate(6deg)", fontFamily: "'Kalam', cursive", fontSize: 15, fontWeight: 700, boxShadow: "4px 6px 10px rgba(0,0,0,0.35)", maxWidth: 160, lineHeight: 1.25 }}>
-          <div style={{ position: "absolute", top: -9, left: "50%", transform: "translateX(-50%)", width: 16, height: 16, borderRadius: "50%", background: "#F0177B", border: "2px solid #181030" }} />
-          "beta sasta hai, le lo, warna raat ko neend nahi aayegi" — every aunty ever
+      <section className="hero-section">
+        <div className="hero-copy">
+          <div className="location-badge">OPEN 24×7 BECAUSE FOMO DOESN&apos;T SLEEP</div>
+          <div className="hero-kicker">YOUR NEIGHBOURHOOD, BUT ONLINE</div>
+          <h1>THELA SE <span>DIL</span><br />TAK <strong>PAHUNCHE</strong></h1>
+          <div className="hero-slogan">*sasta, sundar, slay</div>
+          <p>Street market energy, doorstep delivery. Real bazaar chaos, zero bhaav-tav headache — we already fought the shopkeeper so you don't have to.</p>
+          <div className="hero-actions">
+            <a href="#products" className="primary-cta">Ghoomo Bazar</a>
+            <a href="#slogans" className="secondary-cta">Aaj Ka Bhaav</a>
+          </div>
         </div>
-
-        {/* Location Badge */}
-        <div style={{ display: "inline-block", fontFamily: "'Space Mono'", fontSize: 13, fontWeight: 700, background: "#241a45", border: "1px dashed #FFC94A", color: "#FFC94A", padding: "6px 18px", borderRadius: 999, marginBottom: 28, transform: "rotate(-2deg)" }}>📍 OPEN 24×7 BECAUSE FOMO DOESN'T SLEEP</div>
-
-        {/* Main Heading */}
-        <h1 style={{ fontFamily: "'Baloo 2'", fontSize: "clamp(46px,9vw,108px)", lineHeight: 1.65, fontWeight: 800, letterSpacing: "-1.5px", margin: 0, position: "relative" }}>
-          THELA SE <span style={{ color: "#FF7A1A", WebkitTextStroke: "2px #F7EEDD" }}>DIL</span><br />
-          TAK <span style={{ color: "#F0177B", display: "inline-block", transform: "rotate(-2deg)" }}>PAHUNCHE</span>
-        </h1>
-        <div style={{ fontFamily: "'Kalam', cursive", fontSize: 22, color: "#FFC94A", transform: "rotate(-3deg)", marginTop: 32 }}>*sasta, sundar, slay ✨</div>
-
-        <p style={{ maxWidth: 560, margin: "28px auto 40px", fontSize: 18, opacity: 0.82, lineHeight: 1.55 }}>
-          Street market energy, doorstep delivery. Real bazaar chaos, zero bhaav-tav headache — we already fought the shopkeeper so you don't have to.
-        </p>
-
-        <div style={{ display: "flex", gap: 18, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="#products" style={{ fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 18, padding: "16px 34px", borderRadius: 14, textDecoration: "none", background: "#FFC94A", color: "#181030", border: "3px solid #181030", boxShadow: "6px 6px 0 #F0177B", display: "inline-block" }}>Ghoomo Bazar 🛍️</a>
-          <a href="#slogans" style={{ fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 18, padding: "16px 34px", borderRadius: 14, textDecoration: "none", background: "transparent", color: "#F7EEDD", border: "3px solid #F7EEDD", display: "inline-block" }}>Aaj Ka Bhaav 👀</a>
+        <div className="hero-cart-wrap">
+          <span className="cart-sticker sticker-1">₹99<br />ONLY</span>
+          <span className="cart-sticker sticker-2">100%<br />DESI</span>
+          <InteractiveThela />
         </div>
       </section>
 
