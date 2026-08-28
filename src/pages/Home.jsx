@@ -157,7 +157,7 @@ export default function Home() {
       return backendProducts.map((prod, idx) => ({
         id: prod.id || prod._id || `backend-${idx}`,
         title: prod.title || prod.name || "Bazaar Item",
-        subtitle: prod.subtitle || prod.category || prod.name,
+        subtitle: prod.subtitle || prod.category?.name || prod.name,
         description: prod.description || "Fresh off the thela. Limited stock, unlimited attitude.",
         price: prod.price || 299,
         originalPrice: prod.original_price || prod.originalPrice || prod.mrp,
