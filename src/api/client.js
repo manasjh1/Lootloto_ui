@@ -21,7 +21,7 @@ client.interceptors.response.use(
     if (err.response?.status === 401 && !original._retry && !original.url?.includes("/auth/")) {
       original._retry = true
       try {
-        const { data } = await client.post("/api/auth/refresh", {}, { timeout: 2000 })
+        const { data } = await client.post("/auth/refresh", {}, { timeout: 2000 })
         if (data?.access_token) {
           localStorage.setItem("access_token", data.access_token)
           original.headers.Authorization = `Bearer ${data.access_token}`

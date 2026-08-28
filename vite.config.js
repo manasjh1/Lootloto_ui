@@ -7,7 +7,11 @@ export default defineConfig({
     port: 5173,
     host: "127.0.0.1", // Force IPv4-only — fixes macOS localhost pending issue
     proxy: {
-      "/api": {
+      "/auth": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/catalog": {
         target: "http://localhost:8000",
         changeOrigin: true,
       },
