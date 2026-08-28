@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LootLooto Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,500&family=Space+Mono:wght@400;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Tokens (LootLooto light theme) ──────────────────── */
+  :root {
+    --bg:        #FFF7EC;
+    --bg-alt:    #FFEFDA;
+    --surface:   #ffffff;
+    --surface2:  #FFF1DC;
+    --border:    rgba(24,16,48,0.1);
+    --text:      #181030;
+    --muted:     rgba(24,16,48,0.6);
+    --accent:    #F0177B;
+    --accent-h:  #d1105f;
+    --accent-bg: rgba(240,23,123,0.12);
+    --danger:    #b80c53;
+    --danger-bg: rgba(184,12,83,0.1);
+    --success:   #0B6E4F;
+    --success-bg:rgba(11,110,79,0.14);
+    --warn:      #FF7A1A;
+    --warn-bg:   rgba(255,122,26,0.16);
+    --gold:      #FFC94A;
+    --purple:    #7A5CFF;
+    --font-heading: 'Baloo 2', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --shadow:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+    --radius:    10px;
+  }
+
+  /* ── Reset ────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  button, select, input { font-family: inherit; font-size: inherit; }
+
+  /* ── Top Bar ──────────────────────────────────────────── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 30;
+  }
+  .topbar-inner {
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 24px;
+    height: 56px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 999px;
+    background: conic-gradient(from 90deg, #F0177B, #FF7A1A, #FFC94A, #F0177B);
+    color: #181030; border: 2px solid #181030;
+    display: grid; place-items: center;
+    font-family: var(--font-heading);
+    font-size: 15px; font-weight: 800; letter-spacing: -.5px;
+    transform: rotate(-8deg);
+  }
+  .brand-name { font-family: var(--font-heading); font-weight: 700; font-size: 16px; letter-spacing: -.3px; }
+  .brand-badge {
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--accent-bg); color: var(--accent);
+    padding: 2px 7px; border-radius: 999px;
+  }
+  .topbar-spacer { flex: 1; }
+  .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .topbar-user strong { font-weight: 600; }
+  .topbar-role {
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--warn);
+  }
+
+  /* ── Layout ───────────────────────────────────────────── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  /* ── Page header ──────────────────────────────────────── */
+  .page-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+  }
+  .page-title { font-family: var(--font-heading); font-size: 24px; font-weight: 800; letter-spacing: -.4px; line-height: 1.1; }
+  .page-sub { color: var(--muted); margin-top: 4px; font-size: 13px; font-family: 'Kalam', cursive; font-size: 14px; }
+
+  /* ── Buttons ──────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 16px; border-radius: 999px;
+    border: 2px solid var(--border); background: var(--surface);
+    color: var(--text); font-family: var(--font-mono); font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: background .15s, border-color .15s, transform .15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary {
+    background: var(--gold); border-color: #181030; color: #181030; font-weight: 700;
+    box-shadow: 3px 3px 0 var(--accent);
+  }
+  .btn-primary:hover { background: #ffd873; transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--accent); }
+  .btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; font-weight: 700; }
+  .btn-danger:hover { background: #96093f; border-color: #96093f; }
+  .btn-ghost { border-color: transparent; background: transparent; }
+  .btn-ghost:hover { background: var(--surface2); border-color: var(--border); }
+  .btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 999px; }
+
+  /* ── Filter tabs ──────────────────────────────────────── */
+  .filter-row {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .filter-tab {
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px dashed var(--border); background: transparent;
+    color: var(--muted); font-family: var(--font-mono); font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: all .15s;
+  }
+  .filter-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-tab.active {
+    background: var(--gold); border-color: var(--gold); border-style: solid; color: #181030; font-weight: 700;
+  }
+  .filter-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 999px;
+    background: rgba(24,16,48,.12); font-size: 10px; font-weight: 700;
+    vertical-align: middle; margin-left: 2px;
+  }
+  .filter-tab:not(.active) .filter-count {
+    background: var(--border); color: var(--muted);
+  }
+  .filter-spacer { flex: 1; }
+  .search-wrap { position: relative; }
+  .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+  .search-input {
+    padding: 6px 12px 6px 32px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); width: 220px; outline: none;
+    font-size: 13px;
+    transition: border-color .15s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+
+  /* ── Table card ───────────────────────────────────────── */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--bg-alt); border-bottom: 1px solid var(--border); }
+  th {
+    padding: 9px 14px;
+    text-align: left; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase; color: var(--warn);
+    white-space: nowrap;
+  }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  tr:hover td { background: var(--surface2); }
+  .user-name { font-weight: 700; font-size: 13.5px; font-family: var(--font-heading); }
+  .user-email { color: var(--muted); font-size: 12px; margin-top: 2px; font-family: var(--font-mono); }
+
+  /* ── Role select ──────────────────────────────────────── */
+  .role-select {
+    appearance: none;
+    padding: 4px 28px 4px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); cursor: pointer; outline: none;
+    font-family: var(--font-mono);
+    font-size: 12px; font-weight: 700;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23181030' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    transition: border-color .15s;
+  }
+  .role-select:focus { border-color: var(--accent); }
+  .role-select:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ── Role badges ──────────────────────────────────────── */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  }
+  .badge-admin  { background: rgba(122,92,255,0.15); color: var(--purple); }
+  .badge-staff  { background: var(--warn-bg);   color: var(--warn); }
+  .badge-buyer  { background: var(--surface2);  color: var(--muted); border: 1px solid var(--border); }
+
+  /* ── Status toggle ────────────────────────────────────── */
+  .status-toggle { display: flex; align-items: center; gap: 6px; }
+  .pill-active   { color: var(--success); font-size: 12px; font-weight: 600; }
+  .pill-inactive { color: var(--danger);  font-size: 12px; font-weight: 600; }
+
+  /* ── Date cell ────────────────────────────────────────── */
+  .date-cell { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ── Empty / loading ──────────────────────────────────── */
+  .table-empty {
+    padding: 48px 24px; text-align: center;
+    color: var(--muted); font-size: 14px;
+  }
+  .table-empty strong { display: block; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+
+  /* ── Stats row ────────────────────────────────────────── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .stat-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .stat-value { font-family: var(--font-heading); font-size: 28px; font-weight: 800; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+  .stat-value.accent  { color: var(--accent); }
+  .stat-value.warn    { color: var(--warn); }
+  .stat-value.success { color: var(--success); }
+  .stat-value.danger  { color: var(--danger); }
+
+  /* ── Modal ────────────────────────────────────────────── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity .2s;
+  }
+  .overlay.active { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; width: 100%; max-width: 420px;
+    padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    transform: translateY(8px); transition: transform .2s;
+  }
+  .overlay.active .modal { transform: translateY(0); }
+  .modal-title { font-family: var(--font-heading); font-size: 20px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 20px; }
+  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+  .field label { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--muted); }
+  .field input, .field select {
+    padding: 9px 14px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); outline: none;
+    transition: border-color .15s;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ── Toast ────────────────────────────────────────────── */
+  #toasts {
+    position: fixed; bottom: 20px; right: 20px;
+    display: flex; flex-direction: column; gap: 8px; z-index: 999;
+  }
+  .toast {
+    background: var(--surface); color: var(--text);
+    padding: 12px 18px; border-radius: 4px 14px 14px 4px;
+    font-family: 'Kalam', cursive; font-size: 15px; font-weight: 700;
+    box-shadow: 6px 6px 0 rgba(0,0,0,.25);
+    animation: slideup .2s ease;
+    max-width: 320px;
+  }
+  .toast.ok  { border-left: 4px dashed var(--success); }
+  .toast.err { border-left: 4px dashed var(--danger); }
+  @keyframes slideup { from { transform: translateY(8px); opacity: 0; } }
+
+  /* ── Login screen ─────────────────────────────────────── */
+  #login-screen {
+    min-height: 100vh; display: flex;
+    align-items: center; justify-content: center;
+    background: var(--bg);
+  }
+  .login-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px; width: 100%; max-width: 380px;
+    box-shadow: var(--shadow);
+  }
+  .login-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .login-brand .brand-mark { width: 44px; height: 44px; font-size: 17px; }
+  .login-title { font-family: var(--font-heading); font-size: 22px; font-weight: 800; letter-spacing: -.4px; }
+  .login-sub { color: var(--muted); font-family: 'Kalam', cursive; font-size: 14px; margin-top: 2px; }
+  .login-err {
+    background: var(--danger-bg); color: var(--danger);
+    border: 1px solid var(--danger); border-radius: 10px;
+    padding: 9px 12px; font-size: 13px; margin-bottom: 14px; display: none;
+  }
+
+  /* ── Responsive ───────────────────────────────────────── */
+  @media (max-width: 700px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    th.hide-sm, td.hide-sm { display: none; }
+    .search-input { width: 160px; }
+    .page-head { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ── Focus ────────────────────────────────────────────── */
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, .overlay, .modal, .toast { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Login Screen ──────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-mark">L</div>
+      <div>
+        <div class="login-title">Admin Portal</div>
+        <div class="login-sub">LootLooto · Admins only</div>
+      </div>
+    </div>
+    <div class="login-err" id="login-err"></div>
+    <form id="login-form">
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="login-email" required placeholder="you@lootlooto.com" autocomplete="email">
+      </div>
+      <div class="field" style="margin-bottom:20px;">
+        <label>Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" id="login-btn" style="width:100%; justify-content:center;">
+        Sign in to Admin
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ── App (hidden until authenticated) ─────────────────── -->
+<div id="app" style="display:none;">
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <span class="brand-name">LootLooto</span>
+        <span class="brand-badge">Admin</span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-user">
+        <span class="topbar-role" id="topbar-role">Admin</span>
+        <strong id="topbar-name">—</strong>
+        <button class="btn btn-ghost btn-sm" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <div class="page-head">
+      <div>
+        <div class="page-title">User Management</div>
+        <div class="page-sub">Manage roles, access, and team accounts</div>
+      </div>
+      <button class="btn btn-primary" onclick="openCreateModal()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Create Staff
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card"><div class="stat-label">Total users</div><div class="stat-value" id="s-total">—</div></div>
+      <div class="stat-card"><div class="stat-label">Admins</div><div class="stat-value accent" id="s-admin">—</div></div>
+      <div class="stat-card"><div class="stat-label">Staff</div><div class="stat-value warn" id="s-staff">—</div></div>
+      <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value success" id="s-active">—</div></div>
+    </div>
+
+    <!-- Filter + Search -->
+    <div class="filter-row">
+      <button class="filter-tab active" data-role="all" onclick="setRoleFilter('all', this)">All <span class="filter-count" id="fc-all">0</span></button>
+      <button class="filter-tab" data-role="admin" onclick="setRoleFilter('admin', this)">Admin <span class="filter-count" id="fc-admin">0</span></button>
+      <button class="filter-tab" data-role="staff" onclick="setRoleFilter('staff', this)">Staff <span class="filter-count" id="fc-staff">0</span></button>
+      <button class="filter-tab" data-role="buyer" onclick="setRoleFilter('buyer', this)">Buyers <span class="filter-count" id="fc-buyer">0</span></button>
+      <div class="filter-spacer"></div>
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search" placeholder="Search name or email…" oninput="renderTable()">
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Role</th>
+              <th class="hide-sm">Status</th>
+              <th class="hide-sm">Joined</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="user-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Create Staff Modal ────────────────────────────────── -->
+<div class="overlay" id="modal-create" onclick="closeCreateModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Create Staff Account</div>
+    <form id="create-form" onsubmit="handleCreate(event)">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="field"><label>First name *</label><input id="cf-fn" required placeholder="Jane"></div>
+        <div class="field"><label>Last name</label><input id="cf-ln" placeholder="Doe"></div>
+      </div>
+      <div class="field"><label>Email address *</label><input type="email" id="cf-email" required placeholder="staff@lootlooto.com"></div>
+      <div class="field"><label>Phone number *</label><input type="number" id="cf-phone" required placeholder="9876543210"></div>
+      <div class="field">
+        <label>Role</label>
+        <select id="cf-role">
+          <option value="staff">Staff</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="field"><label>Password *</label><input type="password" id="cf-password" required placeholder="Min 8 characters"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn" onclick="closeCreateModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="create-btn">Create account</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+  const API = "";
+  let token = localStorage.getItem("admin_token") || "";
+  let me = JSON.parse(localStorage.getItem("admin_user") || "null");
+  let allUsers = [];
+  let roleFilter = "all";
+
+  // ── Boot ───────────────────────────────────────────────
+  window.addEventListener("DOMContentLoaded", () => {
+    if (token && me && me.role === "admin") {
+      showApp();
+    }
+  });
+
+  function showApp() {
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    document.getElementById("topbar-name").textContent = me.first_name || me.email_id;
+    document.getElementById("topbar-role").textContent = me.role.toUpperCase();
+    loadUsers();
+  }
+
+  // ── Login ──────────────────────────────────────────────
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("login-btn");
+    const errEl = document.getElementById("login-err");
+    errEl.style.display = "none";
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
+
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email_id: document.getElementById("login-email").value,
+          password: document.getElementById("login-password").value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Login failed");
+      if (data.user.role !== "admin") throw new Error("Access denied — admin accounts only.");
+
+      token = data.access_token;
+      me = data.user;
+      localStorage.setItem("admin_token", token);
+      localStorage.setItem("admin_user", JSON.stringify(me));
+      showApp();
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.style.display = "block";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Sign in to Admin";
+    }
+  });
+
+  function logout() {
+    token = ""; me = null;
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_user");
+    document.getElementById("login-screen").style.display = "flex";
+    document.getElementById("app").style.display = "none";
+    document.getElementById("login-form").reset();
+    document.getElementById("login-err").style.display = "none";
+  }
+
+  function headers() {
+    return { "Content-Type": "application/json", "Authorization": `Bearer ${token}` };
+  }
+
+  // ── Load Users ─────────────────────────────────────────
+  async function loadUsers() {
+    try {
+      const res = await fetch(`${API}/auth/admin/users`, { headers: headers() });
+      if (res.status === 401) { logout(); return; }
+      const data = await res.json();
+      allUsers = Array.isArray(data) ? data : [];
+      updateStats();
+      updateCounts();
+      renderTable();
+    } catch (err) {
+      toast("Failed to load users", "err");
+    }
+  }
+
+  function updateStats() {
+    document.getElementById("s-total").textContent = allUsers.length;
+    document.getElementById("s-admin").textContent = allUsers.filter(u => u.role === "admin").length;
+    document.getElementById("s-staff").textContent = allUsers.filter(u => u.role === "staff").length;
+    document.getElementById("s-active").textContent = allUsers.filter(u => u.is_active).length;
+  }
+
+  function updateCounts() {
+    document.getElementById("fc-all").textContent   = allUsers.length;
+    document.getElementById("fc-admin").textContent = allUsers.filter(u => u.role === "admin").length;
+    document.getElementById("fc-staff").textContent = allUsers.filter(u => u.role === "staff").length;
+    document.getElementById("fc-buyer").textContent = allUsers.filter(u => u.role === "buyer").length;
+  }
+
+  function setRoleFilter(role, el) {
+    roleFilter = role;
+    document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+    el.classList.add("active");
+    renderTable();
+  }
+
+  function renderTable() {
+    const search = document.getElementById("search").value.toLowerCase();
+    let users = allUsers;
+    if (roleFilter !== "all") users = users.filter(u => u.role === roleFilter);
+    if (search) users = users.filter(u =>
+      (u.first_name + " " + (u.last_name||"")).toLowerCase().includes(search) ||
+      u.email_id.toLowerCase().includes(search)
+    );
+
+    const tbody = document.getElementById("user-tbody");
+    if (users.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="table-empty"><strong>No users found</strong>Try a different search or filter.</div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = users.map(u => {
+      const isSelf = u.uuid === me.uuid;
+      const name = [u.first_name, u.last_name].filter(Boolean).join(" ");
+      const joined = u.created_at ? new Date(u.created_at).toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }) : "—";
+      const roleBadge = `<span class="badge badge-${u.role}">${u.role}</span>`;
+
+      return `
+        <tr data-uuid="${esc(u.uuid)}">
+          <td>
+            <div class="user-name">${esc(name)}</div>
+            <div class="user-email">${esc(u.email_id)}</div>
+          </td>
+          <td>
+            <select class="role-select" onchange="changeRole('${esc(u.uuid)}', this)"
+              ${isSelf ? "disabled title='Cannot change your own role'" : ""}>
+              <option value="buyer"  ${u.role==="buyer" ?"selected":""}>Buyer</option>
+              <option value="staff"  ${u.role==="staff" ?"selected":""}>Staff</option>
+              <option value="admin"  ${u.role==="admin" ?"selected":""}>Admin</option>
+            </select>
+          </td>
+          <td class="hide-sm">
+            <span class="${u.is_active ? 'pill-active' : 'pill-inactive'}">
+              ${u.is_active ? "● Active" : "● Inactive"}
+            </span>
+          </td>
+          <td class="hide-sm date-cell">${joined}</td>
+          <td style="text-align:right;">
+            ${isSelf ? '<span style="color:var(--muted);font-size:12px;">You</span>' : `
+              <button class="btn btn-sm ${u.is_active ? 'btn-danger' : ''}"
+                onclick="toggleStatus('${esc(u.uuid)}', ${!u.is_active})">
+                ${u.is_active ? "Deactivate" : "Activate"}
+              </button>
+            `}
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  // ── Change role ────────────────────────────────────────
+  async function changeRole(uuid, selectEl) {
+    const newRole = selectEl.value;
+    const old = allUsers.find(u => u.uuid === uuid)?.role;
+    selectEl.disabled = true;
+    try {
+      const res = await fetch(`${API}/auth/admin/users/${uuid}/role`, {
+        method: "PATCH", headers: headers(),
+        body: JSON.stringify({ role: newRole })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Role change failed");
+      const u = allUsers.find(u => u.uuid === uuid);
+      if (u) u.role = newRole;
+      toast(`Role changed to ${newRole}`, "ok");
+      updateStats(); updateCounts(); renderTable();
+    } catch (err) {
+      toast(err.message, "err");
+      if (selectEl && old) selectEl.value = old;
+    } finally {
+      selectEl.disabled = false;
+    }
+  }
+
+  // ── Toggle status ──────────────────────────────────────
+  async function toggleStatus(uuid, activate) {
+    try {
+      const res = await fetch(`${API}/auth/admin/users/${uuid}/status`, {
+        method: "PATCH", headers: headers(),
+        body: JSON.stringify({ is_active: activate })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Status update failed");
+      const u = allUsers.find(u => u.uuid === uuid);
+      if (u) u.is_active = activate;
+      toast(activate ? "Account activated" : "Account deactivated", "ok");
+      updateStats(); renderTable();
+    } catch (err) { toast(err.message, "err"); }
+  }
+
+  // ── Create staff ───────────────────────────────────────
+  function openCreateModal() {
+    document.getElementById("modal-create").classList.add("active");
+    document.getElementById("cf-fn").focus();
+  }
+  function closeCreateModal(e) {
+    if (e && e.target !== document.getElementById("modal-create")) return;
+    document.getElementById("modal-create").classList.remove("active");
+    document.getElementById("create-form").reset();
+  }
+
+  async function handleCreate(e) {
+    e.preventDefault();
+    const btn = document.getElementById("create-btn");
+    btn.disabled = true; btn.textContent = "Creating…";
+
+    const role = document.getElementById("cf-role").value;
+    const endpoint = role === "admin" ? "/auth/admin/create-staff" : "/auth/admin/create-staff";
+
+    try {
+      const res = await fetch(`${API}/auth/admin/create-staff`, {
+        method: "POST", headers: headers(),
+        body: JSON.stringify({
+          first_name: document.getElementById("cf-fn").value,
+          last_name:  document.getElementById("cf-ln").value || undefined,
+          email_id:   document.getElementById("cf-email").value,
+          phone_number: parseInt(document.getElementById("cf-phone").value),
+          password:   document.getElementById("cf-password").value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Creation failed");
+
+      // If admin was selected, also update the role
+      if (role === "admin" && data.user?.uuid) {
+        await fetch(`${API}/auth/admin/users/${data.user.uuid}/role`, {
+          method: "PATCH", headers: headers(),
+          body: JSON.stringify({ role: "admin" })
+        });
+      }
+
+      toast(`Account created for ${data.user.email_id}`, "ok");
+      document.getElementById("modal-create").classList.remove("active");
+      document.getElementById("create-form").reset();
+      await loadUsers();
+    } catch (err) {
+      toast(err.message, "err");
+    } finally {
+      btn.disabled = false; btn.textContent = "Create account";
+    }
+  }
+
+  // ── Utilities ──────────────────────────────────────────
+  function toast(msg, type = "ok") {
+    const el = document.createElement("div");
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    document.getElementById("toasts").appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+
+  function esc(s) {
+    return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+</script>
+</body>
+</html>
