@@ -263,19 +263,19 @@ export default function Home() {
   }, [quirkyLines, buyers])
 
   return (
-    <div style={{ background: "#181030", color: "#F7EEDD", fontFamily: "'DM Sans', sans-serif", overflowX: "hidden", position: "relative", minHeight: "100vh" }} id="stage">
+    <div style={{ background: "#FFF7EC", color: "#181030", fontFamily: "'DM Sans', sans-serif", overflowX: "hidden", position: "relative", minHeight: "100vh" }} id="stage">
       
       {/* Decorative background glow circles */}
       <div style={{ position: "absolute", top: 180, left: -140, width: 380, height: 380, borderRadius: "50%", background: "radial-gradient(circle at 30% 30%, #FF7A1A55, transparent 60%)", filter: "blur(6px)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 520, right: -160, width: 420, height: 420, borderRadius: "50%", background: "radial-gradient(circle at 60% 40%, #F0177B44, transparent 60%)", filter: "blur(8px)", pointerEvents: "none" }} />
 
       {/* TOP STRIP & MARQUEE TICKER */}
-      <div style={{ background: "#0f0a22", borderBottom: "1px solid rgba(255,201,74,0.18)", position: "relative" }}>
+      <div style={{ background: "#FFEFDA", borderBottom: "1px solid rgba(255,122,26,0.25)", position: "relative" }}>
         
-        <div style={{ background: "#181030", color: "#F7EEDD", overflow: "hidden", whiteSpace: "nowrap", padding: "11px 0", borderTop: "1px solid rgba(255,201,74,0.14)", borderBottom: "1px solid rgba(255,201,74,0.14)", position: "relative" }}>
+        <div style={{ background: "#FFFFFF", color: "#181030", overflow: "hidden", whiteSpace: "nowrap", padding: "11px 0", borderTop: "1px solid rgba(255,201,74,0.4)", borderBottom: "1px solid rgba(255,201,74,0.4)", position: "relative" }}>
           {/* Fade edges */}
-          <div style={{ position: "absolute", inset: "0 auto 0 0", width: 80, background: "linear-gradient(90deg,#181030,transparent)", zIndex: 2, pointerEvents: "none" }} />
-          <div style={{ position: "absolute", inset: "0 0 0 auto", width: 80, background: "linear-gradient(270deg,#181030,transparent)", zIndex: 2, pointerEvents: "none" }} />
+          <div style={{ position: "absolute", inset: "0 auto 0 0", width: 80, background: "linear-gradient(90deg,#FFFFFF,transparent)", zIndex: 2, pointerEvents: "none" }} />
+          <div style={{ position: "absolute", inset: "0 0 0 auto", width: 80, background: "linear-gradient(270deg,#FFFFFF,transparent)", zIndex: 2, pointerEvents: "none" }} />
           
           <div style={{ display: "inline-block", willChange: "transform", animation: "scroll-left 48s linear infinite", fontFamily: "'Space Mono', monospace", fontWeight: 700, fontSize: 14, letterSpacing: "0.6px" }}>
             {[...tickerItems, ...tickerItems].map((item, idx) => (
@@ -285,7 +285,7 @@ export default function Home() {
                 ) : (
                   <span style={{ fontWeight: 800, margin: "0 24px" }}>
                     <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "#0B6E4F", marginRight: 6, boxShadow: "0 0 0 3px rgba(11,110,79,0.35)", animation: "dot-pulse 1.2s ease-in-out infinite", verticalAlign: "middle" }} />
-                    JUST IN: <b style={{ textDecoration: "underline", textDecorationStyle: "wavy", textDecorationColor: "#181030", textUnderlineOffset: "3px" }}>{item.buyer.name}</b> ({item.buyer.city}) copped the {item.buyer.item} 👀
+                    JUST IN: <b style={{ textDecoration: "underline", textDecorationStyle: "wavy", textDecorationColor: "#FF7A1A", textUnderlineOffset: "3px" }}>{item.buyer.name}</b> ({item.buyer.city}) copped the {item.buyer.item} 👀
                   </span>
                 )}
                 <span style={{ margin: "0 18px", color: "#181030", opacity: 0.5 }}>✦</span>
@@ -296,12 +296,12 @@ export default function Home() {
 
         {/* Shanivaar Special Pill Row */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 18, padding: "14px 6%", flexWrap: "wrap" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "transparent", color: "#FFC94A", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 12, letterSpacing: 2, textTransform: "uppercase" }}>
-            <span style={{ width: 22, height: 1, background: "#FFC94A", opacity: 0.5 }} />
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "transparent", color: "#FF7A1A", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 12, letterSpacing: 2, textTransform: "uppercase" }}>
+            <span style={{ width: 22, height: 1, background: "#FFC94A", opacity: 0.7 }} />
             Shanivaar Special
-            <span style={{ width: 22, height: 1, background: "#FFC94A", opacity: 0.5 }} />
+            <span style={{ width: 22, height: 1, background: "#FFC94A", opacity: 0.7 }} />
           </span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "8px 18px", border: "1px solid rgba(255,201,74,0.35)", borderRadius: 999, fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 15, color: "#F7EEDD" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "8px 18px", border: "1px solid rgba(255,122,26,0.4)", borderRadius: 999, fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 15, color: "#181030" }}>
             <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: "#0B6E4F", boxShadow: "0 0 0 3px rgba(11,110,79,0.28)", animation: "dot-pulse 1.4s ease-in-out infinite" }} />
             Prices dropped up to <span style={{ color: "#FF7A1A", fontWeight: 800 }}>40%</span>
             <span style={{ opacity: 0.55, fontFamily: "'Kalam', cursive", fontWeight: 400 }}>— gir gaya, sach mein</span>
@@ -312,8 +312,8 @@ export default function Home() {
       {/* NAVBAR */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 6%", position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/")}>
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "conic-gradient(from 90deg,#F0177B,#FF7A1A,#FFC94A,#F0177B)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Baloo 2'", fontWeight: 800, fontSize: 17, color: "#181030", transform: "rotate(-8deg)", border: "3px solid #F7EEDD", boxShadow: "3px 3px 0 #F0177B" }}>LL</div>
-          <div style={{ fontSize: 23, fontWeight: 800, letterSpacing: "0.5px" }}>LOOT<span style={{ color: "#FFC94A" }}>LOOTO</span></div>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "conic-gradient(from 90deg,#F0177B,#FF7A1A,#FFC94A,#F0177B)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Baloo 2'", fontWeight: 800, fontSize: 17, color: "#181030", transform: "rotate(-8deg)", border: "3px solid #181030", boxShadow: "3px 3px 0 #F0177B" }}>LL</div>
+          <div style={{ fontSize: 23, fontWeight: 800, letterSpacing: "0.5px" }}>LOOT<span style={{ color: "#FF7A1A" }}>LOOTO</span></div>
         </div>
 
         <div style={{ display: "flex", gap: 32, fontSize: 15, fontWeight: 500 }} className="nav-links-hide">
@@ -326,12 +326,12 @@ export default function Home() {
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           {isLoggedIn ? (
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 13, fontFamily: "'Space Mono'", color: "#FFC94A" }}>{user?.email || "User"}</span>
-              <button onClick={handleLogout} style={{ background: "transparent", color: "#F7EEDD", border: "1px solid rgba(247,238,221,0.3)", padding: "6px 14px", borderRadius: 999, fontSize: 12, cursor: "pointer" }}>Logout</button>
+              <span style={{ fontSize: 13, fontFamily: "'Space Mono'", color: "#FF7A1A" }}>{user?.email || "User"}</span>
+              <button onClick={handleLogout} style={{ background: "transparent", color: "#181030", border: "1px solid rgba(24,16,48,0.3)", padding: "6px 14px", borderRadius: 999, fontSize: 12, cursor: "pointer" }}>Logout</button>
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <Link to="/login" style={{ textDecoration: "none", color: "#F7EEDD", fontSize: 13, fontWeight: 600, padding: "6px 12px" }}>Login</Link>
+              <Link to="/login" style={{ textDecoration: "none", color: "#181030", fontSize: 13, fontWeight: 600, padding: "6px 12px" }}>Login</Link>
             </div>
           )}
           <button style={{ background: "#F0177B", color: "#F7EEDD", border: "3px solid #181030", padding: "10px 22px", borderRadius: 999, fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "4px 4px 0 #FFC94A" }}>
@@ -382,14 +382,14 @@ export default function Home() {
         </div>
 
         {/* Location Badge */}
-        <div style={{ display: "inline-block", fontFamily: "'Space Mono'", fontSize: 13, fontWeight: 700, background: "#241a45", border: "1px dashed #FFC94A", color: "#FFC94A", padding: "6px 18px", borderRadius: 999, marginBottom: 28, transform: "rotate(-2deg)" }}>📍 OPEN 24×7 BECAUSE FOMO DOESN'T SLEEP</div>
+        <div style={{ display: "inline-block", fontFamily: "'Space Mono'", fontSize: 13, fontWeight: 700, background: "#FFFFFF", border: "1px dashed #FF7A1A", color: "#181030", padding: "6px 18px", borderRadius: 999, marginBottom: 28, transform: "rotate(-2deg)" }}>📍 OPEN 24×7 BECAUSE FOMO DOESN'T SLEEP</div>
 
         {/* Main Heading */}
         <h1 style={{ fontFamily: "'Baloo 2'", fontSize: "clamp(46px,9vw,108px)", lineHeight: 1.65, fontWeight: 800, letterSpacing: "-1.5px", margin: 0, position: "relative" }}>
-          THELA SE <span style={{ color: "#FF7A1A", WebkitTextStroke: "2px #F7EEDD" }}>DIL</span><br />
+          THELA SE <span style={{ color: "#FF7A1A", WebkitTextStroke: "2px #181030" }}>DIL</span><br />
           TAK <span style={{ color: "#F0177B", display: "inline-block", transform: "rotate(-2deg)" }}>PAHUNCHE</span>
         </h1>
-        <div style={{ fontFamily: "'Kalam', cursive", fontSize: 22, color: "#FFC94A", transform: "rotate(-3deg)", marginTop: 32 }}>*sasta, sundar, slay ✨</div>
+        <div style={{ fontFamily: "'Kalam', cursive", fontSize: 22, color: "#FF7A1A", transform: "rotate(-3deg)", marginTop: 32 }}>*sasta, sundar, slay ✨</div>
 
         <p style={{ maxWidth: 560, margin: "28px auto 40px", fontSize: 18, opacity: 0.82, lineHeight: 1.55 }}>
           Street market energy, doorstep delivery. Real bazaar chaos, zero bhaav-tav headache — we already fought the shopkeeper so you don't have to.
@@ -397,7 +397,7 @@ export default function Home() {
 
         <div style={{ display: "flex", gap: 18, justifyContent: "center", flexWrap: "wrap" }}>
           <a href="#products" style={{ fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 18, padding: "16px 34px", borderRadius: 14, textDecoration: "none", background: "#FFC94A", color: "#181030", border: "3px solid #181030", boxShadow: "6px 6px 0 #F0177B", display: "inline-block" }}>Ghoomo Bazar 🛍️</a>
-          <a href="#slogans" style={{ fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 18, padding: "16px 34px", borderRadius: 14, textDecoration: "none", background: "transparent", color: "#F7EEDD", border: "3px solid #F7EEDD", display: "inline-block" }}>Aaj Ka Bhaav 👀</a>
+          <a href="#slogans" style={{ fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 18, padding: "16px 34px", borderRadius: 14, textDecoration: "none", background: "transparent", color: "#181030", border: "3px solid #181030", display: "inline-block" }}>Aaj Ka Bhaav 👀</a>
         </div>
       </section>
 
@@ -405,7 +405,7 @@ export default function Home() {
       <div 
         id="slogans" 
         onClick={showNextSlogan}
-        style={{ background: "#F7EEDD", color: "#181030", padding: "60px 6%", textAlign: "center", borderTop: "6px solid #181030", borderBottom: "6px solid #181030", position: "relative", overflow: "hidden", cursor: "pointer" }}
+        style={{ background: "#FFFFFF", color: "#181030", padding: "60px 6%", textAlign: "center", borderTop: "6px solid #181030", borderBottom: "6px solid #181030", position: "relative", overflow: "hidden", cursor: "pointer" }}
       >
         {/* Rangoli dots */}
         <div style={{ position: "absolute", top: 14, left: 14, display: "flex", gap: 6 }}>
@@ -437,8 +437,8 @@ export default function Home() {
       </div>
 
       {/* DOODLE DIVIDER */}
-      <div style={{ display: "flex", justifyContent: "center", padding: "8px 0", background: "#181030" }}>
-        <svg width="240" height="24" viewBox="0 0 220 24" fill="none"><path d="M2 12 Q 20 2, 38 12 T 74 12 T 110 12 T 146 12 T 182 12 T 218 12" stroke="#FFC94A" strokeWidth="2.5" strokeLinecap="round" /></svg>
+      <div style={{ display: "flex", justifyContent: "center", padding: "8px 0", background: "#FFF7EC" }}>
+        <svg width="240" height="24" viewBox="0 0 220 24" fill="none"><path d="M2 12 Q 20 2, 38 12 T 74 12 T 110 12 T 146 12 T 182 12 T 218 12" stroke="#FF7A1A" strokeWidth="2.5" strokeLinecap="round" /></svg>
       </div>
 
       {/* PRODUCTS SECTION */}
@@ -453,8 +453,8 @@ export default function Home() {
           <div 
             key={stall.id} 
             style={{ 
-              background: "#241a45", 
-              border: "2px solid rgba(247,238,221,0.14)", 
+              background: "#FFFFFF",
+              border: "2px solid rgba(24,16,48,0.1)",
               borderRadius: 20, 
               padding: 22, 
               position: "relative", 
@@ -484,9 +484,9 @@ export default function Home() {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-              <div style={{ fontFamily: "'Space Mono'", fontWeight: 700, color: "#FFC94A" }}>
+              <div style={{ fontFamily: "'Space Mono'", fontWeight: 700, color: "#FF7A1A" }}>
                 {stall.originalPrice && (
-                  <span style={{ textDecoration: "line-through", opacity: 0.5, color: "#F7EEDD", fontWeight: 400, marginRight: 6 }}>
+                  <span style={{ textDecoration: "line-through", opacity: 0.5, color: "#181030", fontWeight: 400, marginRight: 6 }}>
                     ₹{stall.originalPrice}
                   </span>
                 )}
@@ -499,8 +499,8 @@ export default function Home() {
       </div>
 
       {/* FOOTER */}
-      <footer style={{ textAlign: "center", padding: "60px 6% 44px", borderTop: "1px solid rgba(247,238,221,0.14)", fontSize: 13, opacity: 0.65 }}>
-        <div style={{ fontFamily: "'Baloo 2'", fontSize: 22, opacity: 1, marginBottom: 12, color: "#FFC94A" }}>LOOTLOOTO</div>
+      <footer style={{ textAlign: "center", padding: "60px 6% 44px", borderTop: "1px solid rgba(24,16,48,0.12)", fontSize: 13, opacity: 0.65 }}>
+        <div style={{ fontFamily: "'Baloo 2'", fontSize: 22, opacity: 1, marginBottom: 12, color: "#FF7A1A" }}>LOOTLOOTO</div>
         <div style={{ fontFamily: "'Kalam', cursive", fontSize: 16, opacity: 0.85 }}>Bazar band nahi hota, bas tab bandh hota hai jab paisa khatam ho jaaye.</div>
         <div style={{ marginTop: 16 }}>© 2026 Lootlooto · running on jugaad, not just js</div>
       </footer>
@@ -514,8 +514,8 @@ export default function Home() {
             left: 22, 
             bottom: 22, 
             zIndex: 50, 
-            background: "#F7EEDD", 
-            color: "#181030", 
+            background: "#FFFFFF",
+            color: "#181030",
             padding: "14px 18px 14px 16px", 
             borderRadius: "4px 14px 14px 4px", 
             maxWidth: 280, 
