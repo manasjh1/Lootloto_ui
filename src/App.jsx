@@ -5,6 +5,7 @@ import VerifyEmail   from "./pages/auth/VerifyEmail"
 import Home          from "./pages/Home"
 import ProductDetail from "./pages/ProductDetail"
 import StaffPortal   from "./pages/StaffPortal"
+import AdminPortal   from "./pages/AdminPortal"
 import ProtectedRoute from "./components/ProtectedRoute"
 import RoleProtectedRoute from "./components/RoleProtectedRoute"
 
@@ -22,6 +23,14 @@ export default function App() {
           element={
             <RoleProtectedRoute roles={["staff", "admin"]}>
               <StaffPortal />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <RoleProtectedRoute roles={["admin"]}>
+              <AdminPortal />
             </RoleProtectedRoute>
           }
         />

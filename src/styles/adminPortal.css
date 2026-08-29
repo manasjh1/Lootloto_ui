@@ -1,0 +1,283 @@
+/* AdminPortal styles — ported from the old static public/admin.html.
+   Everything is scoped under .admin-portal so it can never bleed into
+   staffPortal.css (or vice versa) when the SPA navigates between routes. */
+
+.admin-portal {
+  --a-bg:        #FFF7EC;
+  --a-bg-alt:    #FFEFDA;
+  --a-surface:   #ffffff;
+  --a-surface2:  #FFF1DC;
+  --a-border:    rgba(24,16,48,0.1);
+  --a-text:      #181030;
+  --a-muted:     rgba(24,16,48,0.6);
+  --a-accent:    #F0177B;
+  --a-accent-h:  #d1105f;
+  --a-accent-bg: rgba(240,23,123,0.12);
+  --a-danger:    #b80c53;
+  --a-danger-bg: rgba(184,12,83,0.1);
+  --a-success:   #0B6E4F;
+  --a-warn:      #FF7A1A;
+  --a-warn-bg:   rgba(255,122,26,0.16);
+  --a-gold:      #FFC94A;
+  --a-purple:    #7A5CFF;
+  --a-font-heading: 'Baloo 2', sans-serif;
+  --a-font-body: 'DM Sans', sans-serif;
+  --a-font-mono: 'Space Mono', monospace;
+  --a-shadow:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --a-radius:    10px;
+
+  background: var(--a-bg);
+  color: var(--a-text);
+  font-family: var(--a-font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+.admin-portal * { box-sizing: border-box; }
+.admin-portal a { color: var(--a-accent); text-decoration: none; }
+.admin-portal button, .admin-portal select, .admin-portal input { font-family: inherit; font-size: inherit; }
+
+/* ── Top bar ──────────────────────────────────────────── */
+.admin-portal .a-topbar {
+  background: var(--a-surface);
+  border-bottom: 1px solid var(--a-border);
+  position: sticky; top: 0; z-index: 30;
+}
+.admin-portal .a-topbar-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex; align-items: center; gap: 16px;
+}
+.admin-portal .a-brand { display: flex; align-items: center; gap: 10px; }
+.admin-portal .a-brand-mark {
+  width: 34px; height: 34px; border-radius: 999px;
+  background: conic-gradient(from 90deg, #F0177B, #FF7A1A, #FFC94A, #F0177B);
+  color: #181030; border: 2px solid #181030;
+  display: grid; place-items: center;
+  font-family: var(--a-font-heading);
+  font-size: 15px; font-weight: 800; letter-spacing: -.5px;
+  transform: rotate(-8deg);
+}
+.admin-portal .a-brand-name { font-family: var(--a-font-heading); font-weight: 700; font-size: 16px; letter-spacing: -.3px; }
+.admin-portal .a-brand-badge {
+  font-family: var(--a-font-mono);
+  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--a-accent-bg); color: var(--a-accent);
+  padding: 2px 7px; border-radius: 999px;
+}
+.admin-portal .a-topbar-spacer { flex: 1; }
+.admin-portal .a-topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.admin-portal .a-topbar-user strong { font-weight: 600; }
+.admin-portal .a-topbar-role {
+  font-family: var(--a-font-mono);
+  font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--a-warn);
+}
+
+/* ── Layout ───────────────────────────────────────────── */
+.admin-portal .a-page { max-width: 1100px; margin: 0 auto; padding: 28px 24px 60px; }
+
+/* ── Page header ──────────────────────────────────────── */
+.admin-portal .a-page-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+}
+.admin-portal .a-page-title { font-family: var(--a-font-heading); font-size: 24px; font-weight: 800; letter-spacing: -.4px; line-height: 1.1; }
+.admin-portal .a-page-sub { color: var(--a-muted); margin-top: 4px; font-family: 'Kalam', cursive; font-size: 14px; }
+
+/* ── Buttons ──────────────────────────────────────────── */
+.admin-portal .a-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 16px; border-radius: 999px;
+  border: 2px solid var(--a-border); background: var(--a-surface);
+  color: var(--a-text); font-family: var(--a-font-mono); font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: background .15s, border-color .15s, transform .15s;
+  white-space: nowrap;
+}
+.admin-portal .a-btn:hover { background: var(--a-surface2); }
+.admin-portal .a-btn-primary {
+  background: var(--a-gold); border-color: #181030; color: #181030; font-weight: 700;
+  box-shadow: 3px 3px 0 var(--a-accent);
+}
+.admin-portal .a-btn-primary:hover { background: #ffd873; transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--a-accent); }
+.admin-portal .a-btn-danger { background: var(--a-danger); border-color: var(--a-danger); color: #fff; font-weight: 700; }
+.admin-portal .a-btn-danger:hover { background: #96093f; border-color: #96093f; }
+.admin-portal .a-btn-ghost { border-color: transparent; background: transparent; }
+.admin-portal .a-btn-ghost:hover { background: var(--a-surface2); border-color: var(--a-border); }
+.admin-portal .a-btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 999px; }
+.admin-portal .a-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ── Filter tabs ──────────────────────────────────────── */
+.admin-portal .a-filter-row {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.admin-portal .a-filter-tab {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px dashed var(--a-border); background: transparent;
+  color: var(--a-muted); font-family: var(--a-font-mono); font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: all .15s;
+}
+.admin-portal .a-filter-tab:hover { border-color: var(--a-accent); color: var(--a-accent); }
+.admin-portal .a-filter-tab.active {
+  background: var(--a-gold); border-color: var(--a-gold); border-style: solid; color: #181030; font-weight: 700;
+}
+.admin-portal .a-filter-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px;
+  background: rgba(24,16,48,.12); font-size: 10px; font-weight: 700;
+  vertical-align: middle; margin-left: 2px;
+}
+.admin-portal .a-filter-tab:not(.active) .a-filter-count {
+  background: var(--a-border); color: var(--a-muted);
+}
+.admin-portal .a-filter-spacer { flex: 1; }
+.admin-portal .a-search-wrap { position: relative; }
+.admin-portal .a-search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--a-muted); pointer-events: none; }
+.admin-portal .a-search-input {
+  padding: 6px 12px 6px 32px; border-radius: 999px;
+  border: 1px solid var(--a-border); background: var(--a-surface2);
+  color: var(--a-text); width: 220px; outline: none;
+  font-size: 13px;
+  transition: border-color .15s;
+}
+.admin-portal .a-search-input:focus { border-color: var(--a-accent); }
+
+/* ── Table card ───────────────────────────────────────── */
+.admin-portal .a-table-card {
+  background: var(--a-surface);
+  border: 1px solid var(--a-border);
+  border-radius: var(--a-radius);
+  box-shadow: var(--a-shadow);
+  overflow: hidden;
+}
+.admin-portal .a-table-scroll { overflow-x: auto; }
+.admin-portal table { width: 100%; border-collapse: collapse; }
+.admin-portal thead tr { background: var(--a-bg-alt); border-bottom: 1px solid var(--a-border); }
+.admin-portal th {
+  padding: 9px 14px;
+  text-align: left; font-family: var(--a-font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--a-warn);
+  white-space: nowrap;
+}
+.admin-portal td { padding: 12px 14px; border-bottom: 1px solid var(--a-border); vertical-align: middle; }
+.admin-portal tr:last-child td { border-bottom: 0; }
+.admin-portal tr:hover td { background: var(--a-surface2); }
+.admin-portal .a-user-name { font-weight: 700; font-size: 13.5px; font-family: var(--a-font-heading); }
+.admin-portal .a-user-email { color: var(--a-muted); font-size: 12px; margin-top: 2px; font-family: var(--a-font-mono); }
+
+/* ── Role select ──────────────────────────────────────── */
+.admin-portal .a-role-select {
+  appearance: none;
+  padding: 4px 28px 4px 12px; border-radius: 999px;
+  border: 1px solid var(--a-border); background: var(--a-surface2);
+  color: var(--a-text); cursor: pointer; outline: none;
+  font-family: var(--a-font-mono);
+  font-size: 12px; font-weight: 700;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23181030' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color .15s;
+}
+.admin-portal .a-role-select:focus { border-color: var(--a-accent); }
+.admin-portal .a-role-select:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── Role badges ──────────────────────────────────────── */
+.admin-portal .a-badge {
+  display: inline-block;
+  padding: 3px 10px; border-radius: 999px;
+  font-family: var(--a-font-mono);
+  font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+}
+.admin-portal .a-badge-admin  { background: rgba(122,92,255,0.15); color: var(--a-purple); }
+.admin-portal .a-badge-staff  { background: var(--a-warn-bg);   color: var(--a-warn); }
+.admin-portal .a-badge-buyer  { background: var(--a-surface2);  color: var(--a-muted); border: 1px solid var(--a-border); }
+
+/* ── Status pills ─────────────────────────────────────── */
+.admin-portal .a-pill-active   { color: var(--a-success); font-size: 12px; font-weight: 600; }
+.admin-portal .a-pill-inactive { color: var(--a-danger);  font-size: 12px; font-weight: 600; }
+
+/* ── Date cell ────────────────────────────────────────── */
+.admin-portal .a-date-cell { color: var(--a-muted); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ── Empty / loading ──────────────────────────────────── */
+.admin-portal .a-table-empty {
+  padding: 48px 24px; text-align: center;
+  color: var(--a-muted); font-size: 14px;
+}
+.admin-portal .a-table-empty strong { display: block; font-size: 16px; font-weight: 700; color: var(--a-text); margin-bottom: 6px; }
+
+/* ── Stats row ────────────────────────────────────────── */
+.admin-portal .a-stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin-bottom: 20px;
+}
+.admin-portal .a-stat-card {
+  background: var(--a-surface); border: 1px solid var(--a-border);
+  border-radius: var(--a-radius); padding: 14px 16px;
+  box-shadow: var(--a-shadow);
+}
+.admin-portal .a-stat-label { font-family: var(--a-font-mono); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--a-muted); margin-bottom: 6px; }
+.admin-portal .a-stat-value { font-family: var(--a-font-heading); font-size: 28px; font-weight: 800; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+.admin-portal .a-stat-value.accent  { color: var(--a-accent); }
+.admin-portal .a-stat-value.warn    { color: var(--a-warn); }
+.admin-portal .a-stat-value.success { color: var(--a-success); }
+
+/* ── Modal ────────────────────────────────────────────── */
+.admin-portal .a-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.admin-portal .a-overlay.active { opacity: 1; pointer-events: auto; }
+.admin-portal .a-modal {
+  background: var(--a-surface); border: 1px solid var(--a-border);
+  border-radius: 14px; width: 100%; max-width: 420px;
+  padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  transform: translateY(8px); transition: transform .2s;
+}
+.admin-portal .a-overlay.active .a-modal { transform: translateY(0); }
+.admin-portal .a-modal-title { font-family: var(--a-font-heading); font-size: 20px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 20px; }
+.admin-portal .a-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.admin-portal .a-field label { font-family: var(--a-font-mono); font-size: 12px; font-weight: 700; color: var(--a-muted); }
+.admin-portal .a-field input, .admin-portal .a-field select {
+  padding: 9px 14px; border-radius: 999px;
+  border: 1px solid var(--a-border); background: var(--a-surface2);
+  color: var(--a-text); outline: none;
+  transition: border-color .15s;
+  width: 100%;
+}
+.admin-portal .a-field input:focus, .admin-portal .a-field select:focus { border-color: var(--a-accent); }
+.admin-portal .a-modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+.admin-portal .a-modal-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── Toast ────────────────────────────────────────────── */
+.admin-portal #a-toasts {
+  position: fixed; bottom: 20px; right: 20px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 999;
+}
+.admin-portal .a-toast {
+  background: var(--a-surface); color: var(--a-text);
+  padding: 12px 18px; border-radius: 4px 14px 14px 4px;
+  font-family: 'Kalam', cursive; font-size: 15px; font-weight: 700;
+  box-shadow: 6px 6px 0 rgba(0,0,0,.25);
+  animation: a-slideup .2s ease;
+  max-width: 320px;
+}
+.admin-portal .a-toast.ok  { border-left: 4px dashed var(--a-success); }
+.admin-portal .a-toast.err { border-left: 4px dashed var(--a-danger); }
+@keyframes a-slideup { from { transform: translateY(8px); opacity: 0; } }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 700px) {
+  .admin-portal .a-stats-row { grid-template-columns: 1fr 1fr; }
+  .admin-portal th.hide-sm, .admin-portal td.hide-sm { display: none; }
+  .admin-portal .a-search-input { width: 160px; }
+  .admin-portal .a-page-head { flex-direction: column; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-portal *, .admin-portal .a-overlay, .admin-portal .a-modal, .admin-portal .a-toast { transition: none !important; animation: none !important; }
+}

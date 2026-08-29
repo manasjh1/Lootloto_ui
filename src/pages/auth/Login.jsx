@@ -36,8 +36,8 @@ export default function Login() {
         setSession(data.access_token, user, remember)
         // Role-based landing: staff/admin go straight to their portal,
         // everyone else goes to the storefront.
-        if (user.role === "staff") navigate("/staff")
-        else if (user.role === "admin") navigate("/staff") // admin portal not wired up yet — see note below
+        if (user.role === "admin") navigate("/admin")
+        else if (user.role === "staff") navigate("/staff")
         else navigate("/")
       } else {
         setError("Invalid response from server.")

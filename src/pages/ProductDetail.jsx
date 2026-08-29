@@ -24,6 +24,10 @@ export default function ProductDetail() {
   const [activeImg, setActiveImg] = useState(0)
   const [addedFlash, setAddedFlash] = useState(false)
 
+  // "You might also like" — other products from the same category only
+  const [related, setRelated] = useState([])
+  const [relatedLoading, setRelatedLoading] = useState(false)
+
   useEffect(() => {
     let isMounted = true
     async function loadProduct() {
@@ -45,6 +49,36 @@ export default function ProductDetail() {
     loadProduct()
     return () => { isMounted = false }
   }, [idOrSlug])
+
+  // Fetch recommendations scoped to the current product's category only,
+  // re-running whenever the viewed product (and therefore its category) changes.
+  useEffect(() => {
+    const categoryId = product?.category_id || product?.category?.uuid
+    if (!categoryId) {
+      setRelated([])
+      return
+    }
+    let isMounted = true
+    async function loadRelated() {
+      setRelatedLoading(true)
+      try {
+        const res = await client.get("/catalog/products", {
+          params: { category_id: categoryId, is_published: true, limit: 9 },
+        })
+        const items = res.data?.items || (Array.isArray(res.data) ? res.data : [])
+        if (isMounted) {
+          setRelated(items.filter((p) => p.uuid !== product.uuid).slice(0, 4))
+        }
+      } catch (err) {
+        console.error("Failed to load related products", err)
+        if (isMounted) setRelated([])
+      } finally {
+        if (isMounted) setRelatedLoading(false)
+      }
+    }
+    loadRelated()
+    return () => { isMounted = false }
+  }, [product?.uuid, product?.category_id, product?.category?.uuid])
 
   function handleAddToJhola() {
     setAddedFlash(true)
@@ -206,6 +240,66 @@ export default function ProductDetail() {
             SKU · {product.sku}
           </div>
         </div>
+      </div>
+
+      {/* YOU MIGHT ALSO LIKE — same category only */}
+      <div style={{ maxWidth: 1080, margin: "0 auto", padding: "0 6% 90px", position: "relative" }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginBottom: 24, borderTop: `2px dashed rgba(24,16,48,0.15)`, paddingTop: 40 }}>
+          <h2 style={{ fontFamily: "'Baloo 2'", fontSize: "clamp(24px,3.5vw,34px)", fontWeight: 800, margin: 0 }}>
+            Isi Thele Se 🪔 {product.category?.name ? <span style={{ color: COLORS.orange }}>{product.category.name}</span> : "More Like This"}
+          </h2>
+        </div>
+
+        {relatedLoading ? (
+          // Loading placeholders — mirrors the real card layout so nothing jumps on load
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 26 }}>
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} style={{ background: "#FFFFFF", border: "2px solid rgba(24,16,48,0.08)", borderRadius: 18, padding: 18 }}>
+                <div style={{ height: 140, borderRadius: 12, marginBottom: 14, background: "linear-gradient(90deg,#FFF1DC,#FFF7EC,#FFF1DC)" }} />
+                <div style={{ height: 14, width: "70%", borderRadius: 6, marginBottom: 8, background: "rgba(24,16,48,0.08)" }} />
+                <div style={{ height: 14, width: "40%", borderRadius: 6, background: "rgba(24,16,48,0.08)" }} />
+              </div>
+            ))}
+          </div>
+        ) : related.length > 0 ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 26 }}>
+            {related.map((p) => {
+              const img = p.images?.find((i) => i.is_primary) || p.images?.[0]
+              const hasDisc = p.compare_price && p.compare_price > p.selling_price
+              return (
+                <div
+                  key={p.uuid}
+                  onClick={() => navigate(`/product/${p.slug || p.uuid}`)}
+                  style={{ background: "#FFFFFF", border: "2px solid rgba(24,16,48,0.1)", borderRadius: 18, padding: 18, cursor: "pointer", position: "relative" }}
+                >
+                  {hasDisc && (
+                    <div style={{ position: "absolute", top: -10, right: 14, background: COLORS.green, color: COLORS.cream, fontFamily: "'Space Mono'", fontSize: 10, fontWeight: 700, padding: "4px 10px", borderRadius: 999, transform: "rotate(6deg)", border: `1px solid ${COLORS.text}` }}>
+                      SASTA 📉
+                    </div>
+                  )}
+                  {img ? (
+                    <img src={img.url} alt={p.name} style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 12, marginBottom: 14 }} />
+                  ) : (
+                    <div style={{ height: 140, borderRadius: 12, marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Baloo 2'", fontSize: 15, fontWeight: 700, textAlign: "center", padding: "0 10%", background: "linear-gradient(135deg,#FF7A1A,#FFC94A)" }}>
+                      {p.name}
+                    </div>
+                  )}
+                  <h3 style={{ fontFamily: "'Baloo 2'", fontSize: 16, margin: "0 0 8px", lineHeight: 1.3 }}>{p.name}</h3>
+                  <div style={{ fontFamily: "'Space Mono'", fontWeight: 700, color: COLORS.orange, fontSize: 15 }}>
+                    {hasDisc && <span style={{ textDecoration: "line-through", opacity: 0.45, color: COLORS.text, fontWeight: 400, marginRight: 6 }}>₹{Number(p.compare_price).toFixed(0)}</span>}
+                    ₹{Number(p.selling_price).toFixed(0)}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          // Placeholder shown when this category has no other published products yet
+          <div style={{ background: "#FFFFFF", border: "2px dashed rgba(24,16,48,0.15)", borderRadius: 18, padding: "36px 24px", textAlign: "center" }}>
+            <div style={{ fontFamily: "'Baloo 2'", fontSize: 18, fontWeight: 700, marginBottom: 6 }}>Is category mein aur kuch nahi 🤷</div>
+            <p style={{ opacity: 0.7, fontSize: 14, margin: 0 }}>Filhaal is category ka yehi ek item hai. Naya stock jaldi aayega!</p>
+          </div>
+        )}
       </div>
 
       {/* FOOTER — matches Home.jsx */}
