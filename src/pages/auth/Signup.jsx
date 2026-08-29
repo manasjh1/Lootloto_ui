@@ -42,10 +42,18 @@ export default function Signup() {
     setError("")
     setLoading(true)
     try {
+      // API expects first_name/last_name (split from the single Full Name field),
+      // email_id (not email), and phone_number as a number (not phone).
+      const nameParts = form.fullName.trim().split(/\s+/)
+      const first_name = nameParts[0] || ""
+      const last_name = nameParts.slice(1).join(" ") || first_name
+      const phone_number = Number(form.phone.replace(/\D/g, ""))
+
       await registerUser({
-        name: form.fullName,
-        email: form.email,
-        phone: form.phone,
+        first_name,
+        last_name,
+        email_id: form.email,
+        phone_number,
         password: form.password
       })
       navigate("/verify-email", { state: { email: form.email } })

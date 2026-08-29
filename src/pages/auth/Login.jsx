@@ -11,7 +11,7 @@ export default function Login() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const { setUser } = useAuthStore()
+  const { setSession } = useAuthStore()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -23,11 +23,22 @@ export default function Login() {
     setError("")
     setLoading(true)
     try {
-      const data = await loginUser({ email, password })
+      // API expects `email_id`, not `email`
+      const data = await loginUser({ email_id: email, password })
       if (data?.access_token) {
-        localStorage.setItem("access_token", data.access_token)
-        setUser(data.user || { email })
-        navigate("/")
+        // The API returns the JWT alongside user details (name, role, etc.)
+        // either nested under `user` or flattened on the response itself.
+        const user = data.user || {
+          name: data.name,
+          role: data.role,
+          email: data.email_id || email,
+        }
+        setSession(data.access_token, user, remember)
+        // Role-based landing: staff/admin go straight to their portal,
+        // everyone else goes to the storefront.
+        if (user.role === "staff") navigate("/staff")
+        else if (user.role === "admin") navigate("/staff") // admin portal not wired up yet — see note below
+        else navigate("/")
       } else {
         setError("Invalid response from server.")
       }

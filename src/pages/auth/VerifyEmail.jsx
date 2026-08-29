@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { resendVerification, verifyOtp } from "../../api/auth"
+import { useAuthStore } from "../../store/authStore"
 
 export default function VerifyEmail() {
   const navigate = useNavigate()
   const { state } = useLocation()
   const email = state?.email || ""
+  const { setSession } = useAuthStore()
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const [timer, setTimer] = useState(60)
@@ -50,8 +52,23 @@ export default function VerifyEmail() {
     setLoading(true)
     setError("")
     try {
-      await verifyOtp({ email_id: email, otp: code })
-      navigate("/login", { state: { verified: true } })
+      const data = await verifyOtp({ email_id: email, otp: code })
+      if (data?.access_token) {
+        // verify-otp can log the user straight in: it returns a JWT plus
+        // user details (name, role, etc.), same shape as /auth/login.
+        const user = data.user || {
+          name: data.name,
+          role: data.role,
+          email: data.email_id || email,
+        }
+        setSession(data.access_token, user, true)
+        if (user.role === "staff") navigate("/staff")
+        else if (user.role === "admin") navigate("/staff") // admin portal not wired up yet — see note below
+        else navigate("/")
+      } else {
+        // Backend just confirmed the email without issuing a session yet.
+        navigate("/login", { state: { verified: true } })
+      }
     } catch (err) {
       setError(err.message || "Invalid OTP. Try again.")
       setOtp(["", "", "", "", "", ""])
