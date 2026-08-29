@@ -3,8 +3,10 @@ import Signup        from "./pages/auth/Signup"
 import Login         from "./pages/auth/Login"
 import VerifyEmail   from "./pages/auth/VerifyEmail"
 import Home          from "./pages/Home"
+import ProductDetail from "./pages/ProductDetail"
 import StaffPortal   from "./pages/StaffPortal"
-import RoleProtectedRoute from "./components/ProtectedRoute"
+import ProtectedRoute from "./components/ProtectedRoute"
+import RoleProtectedRoute from "./components/RoleProtectedRoute"
 
 export default function App() {
   return (
@@ -14,6 +16,7 @@ export default function App() {
         <Route path="/signup"       element={<Signup />} />
         <Route path="/login"        element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/product/:idOrSlug" element={<ProductDetail />} />
         <Route
           path="/staff"
           element={

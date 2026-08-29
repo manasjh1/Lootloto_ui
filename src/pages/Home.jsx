@@ -154,20 +154,25 @@ export default function Home() {
   // Display mapped products: prioritize staff uploaded backend products if available
   const displayStalls = useMemo(() => {
     if (backendProducts.length > 0) {
-      return backendProducts.map((prod, idx) => ({
-        id: prod.id || prod._id || `backend-${idx}`,
-        title: prod.title || prod.name || "Bazaar Item",
-        subtitle: prod.subtitle || prod.category?.name || prod.name,
-        description: prod.description || "Fresh off the thela. Limited stock, unlimited attitude.",
-        price: prod.price || 299,
-        originalPrice: prod.original_price || prod.originalPrice || prod.mrp,
-        badge: prod.badge || prod.tag || (prod.original_price ? "GIR GAYA PRICE 📉" : null),
-        badgeBg: prod.badgeBg || "#0B6E4F",
-        image: prod.image_url || prod.imageUrl || prod.image,
-        gradient: gradients[idx % gradients.length],
-        textColor: "#181030",
-        rotation: idx % 2 === 0 ? "-1.4deg" : "1.4deg"
-      }))
+      return backendProducts.map((prod, idx) => {
+        const primaryImage = prod.images?.find((i) => i.is_primary) || prod.images?.[0]
+        return {
+          id: prod.uuid,
+          slug: prod.slug,
+          title: prod.name || "Bazaar Item",
+          subtitle: prod.category?.name || prod.name,
+          description: prod.description || "Fresh off the thela. Limited stock, unlimited attitude.",
+          price: prod.selling_price ?? 299,
+          originalPrice: prod.compare_price && prod.compare_price > prod.selling_price ? prod.compare_price : undefined,
+          badge: prod.compare_price && prod.compare_price > prod.selling_price ? "GIR GAYA PRICE 📉" : null,
+          badgeBg: "#0B6E4F",
+          image: primaryImage?.url,
+          gradient: gradients[idx % gradients.length],
+          textColor: "#181030",
+          rotation: idx % 2 === 0 ? "-1.4deg" : "1.4deg",
+          isReal: true,
+        }
+      })
     }
     return defaultStalls
   }, [backendProducts, defaultStalls])
@@ -452,6 +457,7 @@ export default function Home() {
         {displayStalls.map((stall) => (
           <div 
             key={stall.id} 
+            onClick={() => stall.isReal && navigate(`/product/${stall.slug || stall.id}`)}
             style={{ 
               background: "#FFFFFF",
               border: "2px solid rgba(24,16,48,0.1)",
@@ -461,7 +467,8 @@ export default function Home() {
               transform: `rotate(${stall.rotation || '0deg'})`,
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between"
+              justifyContent: "space-between",
+              cursor: stall.isReal ? "pointer" : "default"
             }}
           >
             <div>
@@ -492,7 +499,7 @@ export default function Home() {
                 )}
                 ₹{stall.price}
               </div>
-              <button onClick={() => handleAddToCart(stall.title)} style={{ background: "#FFC94A", color: "#181030", border: "none", width: 36, height: 36, borderRadius: "50%", fontSize: 19, fontWeight: 800, cursor: "pointer" }}>+</button>
+                <button onClick={(e) => { e.stopPropagation(); handleAddToCart(stall.title) }} style={{ background: "#FFC94A", color: "#181030", border: "none", width: 36, height: 36, borderRadius: "50%", fontSize: 19, fontWeight: 800, cursor: "pointer" }}>+</button>
             </div>
           </div>
         ))}
