@@ -146,9 +146,28 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         @media (max-width: 780px) {
-            .row { grid-template-columns: 48px 1fr 64px 132px; gap: var(--space-3); }
-            .row .col-cat, .row .col-status, .row .col-stock { display: none; }
-            .row-actions { gap: 4px; }
-            .row-actions .btn { padding: 6px 10px; font-size: 11px; }
+            .page { padding: var(--space-4) var(--space-4) var(--space-8); }
+            .h-hero { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
             .h1 { font-size: 32px; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+
+            .row.head { display: none; }
+            .row {
+                grid-template-columns: 48px 1fr auto;
+                grid-template-areas: "thumb name price" "thumb actions actions";
+                row-gap: 8px;
+                gap: var(--space-3);
+                align-items: start;
+            }
+            .row .thumb { grid-area: thumb; }
+            .row > div:nth-child(2) { grid-area: name; min-width: 0; overflow-wrap: break-word; }
+            .row .col-cat, .row .col-status, .row .col-stock { display: none; }
+            .row .price { grid-area: price; text-align: right; white-space: nowrap; }
+            .row-actions { grid-area: actions; justify-content: flex-start; gap: 6px; }
+            .row-actions .btn { padding: 6px 10px; font-size: 11px; }
+        }
+
+        @media (max-width: 480px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .sheet-head, .sheet-body, .tabs, .sheet-foot { padding-left: var(--space-4); padding-right: var(--space-4); }
         }
