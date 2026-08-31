@@ -155,26 +155,29 @@ export default function StaffPortal() {
   }
 
   async function handleFileUpload(e) {
-    const file = e.target.files[0]
-    if (!file) return
-    const formData = new FormData()
-    formData.append("file", file)
-    showToast("Uploading file...", "info")
-    try {
-      const res = await client.post("/catalog/upload-image", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        timeout: 60000, // uploads (Supabase Storage round-trip) need more room than the 15s default
-      })
-      setForm((f) => ({
-        ...f,
-        images: [...f.images, { url: res.data.url, sort_order: f.images.length, is_primary: f.images.length === 0 }],
-      }))
-      showToast("Image uploaded!", "success")
-    } catch (err) {
-      showToast(err.message || "Upload failed", "error")
-    } finally {
-      e.target.value = ""
+    const files = Array.from(e.target.files)
+    if (files.length === 0) return
+    showToast(files.length > 1 ? `Uploading ${files.length} files...` : "Uploading file...", "info")
+    let uploaded = 0
+    for (const file of files) {
+      const formData = new FormData()
+      formData.append("file", file)
+      try {
+        const res = await client.post("/catalog/upload-image", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 60000, // uploads (Supabase Storage round-trip) need more room than the 15s default
+        })
+        setForm((f) => ({
+          ...f,
+          images: [...f.images, { url: res.data.url, sort_order: f.images.length, is_primary: f.images.length === 0 }],
+        }))
+        uploaded++
+      } catch (err) {
+        showToast(`${file.name}: ${err.message || "Upload failed"}`, "error")
+      }
     }
+    if (uploaded > 0) showToast(uploaded > 1 ? `${uploaded} images uploaded!` : "Image uploaded!", "success")
+    e.target.value = ""
   }
 
   function removeImage(idx) {
@@ -524,7 +527,7 @@ export default function StaffPortal() {
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
               <label className="btn" style={{ cursor: "pointer", display: "inline-block" }}>
                 📁 Upload file
-                <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileUpload} />
+                <input type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
               </label>
               <label className="btn" style={{ cursor: "pointer", display: "inline-block" }}>
                 📷 Take photo
