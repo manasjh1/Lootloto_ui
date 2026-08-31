@@ -521,10 +521,16 @@ export default function StaffPortal() {
                 <button type="button" className="btn" onClick={addImageFromUrl}>Add</button>
               </div>
             </div>
-            <label className="btn" style={{ cursor: "pointer", display: "inline-block", marginBottom: 12 }}>
-              📁 Upload file
-              <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileUpload} />
-            </label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+              <label className="btn" style={{ cursor: "pointer", display: "inline-block" }}>
+                📁 Upload file
+                <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileUpload} />
+              </label>
+              <label className="btn" style={{ cursor: "pointer", display: "inline-block" }}>
+                📷 Take photo
+                <input type="file" accept="image/*" capture="environment" style={{ display: "none" }} onChange={handleFileUpload} />
+              </label>
+            </div>
             <div className="img-list">
               {form.images.map((img, i) => (
                 <div className="img-tile" key={i}>
