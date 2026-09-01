@@ -45,7 +45,6 @@ export default function StaffPortal() {
   // ── Sheet / form wizard state ──────────────────
   const [sheetOpen, setSheetOpen] = useState(false)
   const [sheetMode, setSheetMode] = useState("new") // "new" | "edit"
-  const [tab, setTab] = useState(0)
   const [form, setForm] = useState(EMPTY_FORM)
   const [imgUrlInput, setImgUrlInput] = useState("")
 
@@ -114,7 +113,6 @@ export default function StaffPortal() {
   function openSheetNew() {
     setForm(EMPTY_FORM)
     setSheetMode("new")
-    setTab(0)
     setSheetOpen(true)
   }
 
@@ -270,7 +268,6 @@ export default function StaffPortal() {
         images: (p.images || []).map((i) => ({ url: i.url, sort_order: i.sort_order || 0, is_primary: i.is_primary || false })),
       })
       setSheetMode("edit")
-      setTab(0)
       setSheetOpen(true)
     } catch (err) {
       showToast(err.message || "Could not fetch product", "error")
@@ -432,15 +429,10 @@ export default function StaffPortal() {
           <button className="close" onClick={closeSheet} aria-label="Close">✕</button>
         </div>
 
-        <div className="tabs" role="tablist">
-          {TAB_NAMES.map((name, i) => (
-            <button key={name} className="tab" aria-selected={tab === i} onClick={() => setTab(i)}>{name}</button>
-          ))}
-        </div>
-
         <div className="sheet-body">
-          {/* Pane 0: Basics */}
-          <div className={`pane ${tab === 0 ? "active" : ""}`}>
+          {/* Basics */}
+          <div className="section">
+            <div className="section-title">{TAB_NAMES[0]}</div>
             <div className="field">
               <label>Product name <span className="req">*</span></label>
               <input className="input" value={form.name} onChange={(e) => onNameChange(e.target.value)} placeholder="e.g. Chevron Palms Cushion Cover" />
@@ -459,8 +451,9 @@ export default function StaffPortal() {
             </div>
           </div>
 
-          {/* Pane 1: Category & Price */}
-          <div className={`pane ${tab === 1 ? "active" : ""}`}>
+          {/* Category & Price */}
+          <div className="section">
+            <div className="section-title">{TAB_NAMES[1]}</div>
             <div className="field">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <label>Category <span className="req">*</span></label>
@@ -477,8 +470,9 @@ export default function StaffPortal() {
             </div>
           </div>
 
-          {/* Pane 2: Status & Visibility */}
-          <div className={`pane ${tab === 2 ? "active" : ""}`}>
+          {/* Status & Visibility */}
+          <div className="section">
+            <div className="section-title">{TAB_NAMES[2]}</div>
             <div className="field">
               <label>Status</label>
               <select className="input" value={form.status} onChange={(e) => setField("status", e.target.value)}>
@@ -497,8 +491,9 @@ export default function StaffPortal() {
             </div>
           </div>
 
-          {/* Pane 3: Inventory */}
-          <div className={`pane ${tab === 3 ? "active" : ""}`}>
+          {/* Inventory */}
+          <div className="section">
+            <div className="section-title">{TAB_NAMES[3]}</div>
             <div className="grid-2">
               <div className="field"><label>Opening qty</label><input type="number" className="input" value={form.opening_qty} onChange={(e) => setField("opening_qty", e.target.value)} /></div>
               <div className="field"><label>Current qty</label><input type="number" className="input" value={form.current_qty} onChange={(e) => setField("current_qty", e.target.value)} /></div>
@@ -515,8 +510,9 @@ export default function StaffPortal() {
             </div>
           </div>
 
-          {/* Pane 4: Images */}
-          <div className={`pane ${tab === 4 ? "active" : ""}`}>
+          {/* Images */}
+          <div className="section">
+            <div className="section-title">{TAB_NAMES[4]}</div>
             <div className="field">
               <label>Add by URL</label>
               <div style={{ display: "flex", gap: 8 }}>
@@ -547,11 +543,10 @@ export default function StaffPortal() {
         </div>
 
         <div className="sheet-foot">
-          <span className="foot-hint">Step {tab + 1} of 5 · {TAB_NAMES[tab]}</span>
+          <span className="foot-hint">{form.uuid ? "Editing product" : "New product"}</span>
           <div className="foot-nav">
-            {tab > 0 && <button className="btn" onClick={() => setTab(tab - 1)}>Back</button>}
-            {tab < 4 && <button className="btn btn-primary" onClick={() => setTab(tab + 1)}>Next</button>}
-            {tab === 4 && <button className="btn btn-primary" onClick={saveProduct}>Save product</button>}
+            <button className="btn" onClick={closeSheet}>Cancel</button>
+            <button className="btn btn-primary" onClick={saveProduct}>{form.uuid ? "Update product" : "Save product"}</button>
           </div>
         </div>
       </aside>
