@@ -105,9 +105,18 @@ export default function ProductDetail() {
     )
   }
 
-  const images = product.images?.length > 0
+  const getImgUrl = (imgObj) => {
+    if (!imgObj) return null
+    if (typeof imgObj === 'string') return imgObj
+    return imgObj.url || imgObj.image_url || imgObj.imageUrl || imgObj.public_url || imgObj.src || null
+  }
+
+  const rawImages = product.images?.length > 0
     ? [...product.images].sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0))
-    : []
+    : (product.image_url || product.image ? [{ url: product.image_url || product.image }] : [])
+
+  const currentImgUrl = getImgUrl(rawImages[activeImg]) || getImgUrl(product)
+
   const hasDiscount = product.compare_price && product.compare_price > product.selling_price
   const discountPct = hasDiscount ? Math.round(100 - (product.selling_price / product.compare_price) * 100) : null
   const inStock = product.current_qty > 0 && product.status !== "OUT_OF_STOCK" && product.status !== "DISCONTINUED"
@@ -139,29 +148,33 @@ export default function ProductDetail() {
                 GIR GAYA PRICE 📉 {discountPct}% OFF
               </div>
             )}
-            {images.length > 0 ? (
-              <img src={images[activeImg].url} alt={product.name} style={{ width: "100%", height: 420, objectFit: "cover", display: "block" }} />
+            {currentImgUrl ? (
+              <img src={currentImgUrl} alt={product.name} style={{ width: "100%", height: 420, objectFit: "cover", display: "block" }} />
             ) : (
               <div style={{ width: "100%", height: 420, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Baloo 2'", fontSize: 22, fontWeight: 700, textAlign: "center", padding: "0 10%", color: COLORS.text, background: `linear-gradient(135deg,${COLORS.orange},${COLORS.gold})` }}>
                 {product.name}
               </div>
             )}
           </div>
-          {images.length > 1 && (
+          {rawImages.length > 1 && (
             <div style={{ display: "flex", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImg(i)}
-                  style={{
-                    width: 64, height: 64, borderRadius: 12, overflow: "hidden", padding: 0, cursor: "pointer",
-                    border: i === activeImg ? `3px solid ${COLORS.orange}` : "2px solid rgba(24,16,48,0.15)",
-                    background: "#FFFFFF",
-                  }}
-                >
-                  <img src={img.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </button>
-              ))}
+              {rawImages.map((img, i) => {
+                const u = getImgUrl(img)
+                if (!u) return null
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImg(i)}
+                    style={{
+                      width: 64, height: 64, borderRadius: 12, overflow: "hidden", padding: 0, cursor: "pointer",
+                      border: i === activeImg ? `3px solid ${COLORS.orange}` : "2px solid rgba(24,16,48,0.15)",
+                      background: "#FFFFFF",
+                    }}
+                  >
+                    <img src={u} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </button>
+                )
+              })}
             </div>
           )}
         </div>

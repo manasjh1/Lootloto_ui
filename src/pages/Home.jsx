@@ -151,22 +151,40 @@ export default function Home() {
 
   const gradients = ['linear-gradient(135deg,#FF7A1A,#FFC94A)', 'linear-gradient(135deg,#F0177B,#ff8fc0)', 'linear-gradient(135deg,#0B6E4F,#38b88a)', 'linear-gradient(135deg,#7A5CFF,#b6a3ff)']
 
+  // Helper to extract image URL from any backend response format
+  const getImageUrl = (prod) => {
+    if (!prod) return null
+    if (Array.isArray(prod.images) && prod.images.length > 0) {
+      const primary = prod.images.find((i) => typeof i === 'object' && i !== null && i.is_primary) || prod.images[0]
+      if (typeof primary === 'string' && primary) return primary
+      if (typeof primary === 'object' && primary !== null) {
+        const url = primary.url || primary.image_url || primary.imageUrl || primary.public_url || primary.src
+        if (url) return url
+      }
+    }
+    if (typeof prod.image_url === 'string' && prod.image_url) return prod.image_url
+    if (typeof prod.image === 'string' && prod.image) return prod.image
+    if (typeof prod.imageUrl === 'string' && prod.imageUrl) return prod.imageUrl
+    if (typeof prod.primary_image === 'string' && prod.primary_image) return prod.primary_image
+    return null
+  }
+
   // Display mapped products: prioritize staff uploaded backend products if available
   const displayStalls = useMemo(() => {
     if (backendProducts.length > 0) {
       return backendProducts.map((prod, idx) => {
-        const primaryImage = prod.images?.find((i) => i.is_primary) || prod.images?.[0]
+        const imgUrl = getImageUrl(prod)
         return {
-          id: prod.uuid,
+          id: prod.uuid || prod.id,
           slug: prod.slug,
-          title: prod.name || "Bazaar Item",
-          subtitle: prod.category?.name || prod.name,
+          title: prod.name || prod.title || "Bazaar Item",
+          subtitle: prod.category?.name || prod.name || prod.title,
           description: prod.description || "Fresh off the thela. Limited stock, unlimited attitude.",
-          price: prod.selling_price ?? 299,
-          originalPrice: prod.compare_price && prod.compare_price > prod.selling_price ? prod.compare_price : undefined,
-          badge: prod.compare_price && prod.compare_price > prod.selling_price ? "GIR GAYA PRICE 📉" : null,
+          price: prod.selling_price ?? prod.price ?? 299,
+          originalPrice: prod.compare_price && prod.compare_price > (prod.selling_price ?? prod.price) ? prod.compare_price : (prod.original_price || undefined),
+          badge: (prod.compare_price && prod.compare_price > (prod.selling_price ?? prod.price)) || prod.badge ? (prod.badge || "GIR GAYA PRICE 📉") : null,
           badgeBg: "#0B6E4F",
-          image: primaryImage?.url,
+          image: imgUrl,
           gradient: gradients[idx % gradients.length],
           textColor: "#181030",
           rotation: idx % 2 === 0 ? "-1.4deg" : "1.4deg",

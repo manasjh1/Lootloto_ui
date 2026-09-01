@@ -165,9 +165,13 @@ export default function StaffPortal() {
           headers: { "Content-Type": "multipart/form-data" },
           timeout: 60000, // uploads (Supabase Storage round-trip) need more room than the 15s default
         })
+        const uploadedUrl = res.data?.url || res.data?.image_url || res.data?.public_url || res.data?.imageUrl || (typeof res.data === 'string' ? res.data : null)
+        if (!uploadedUrl) {
+          throw new Error("Backend did not return an image URL")
+        }
         setForm((f) => ({
           ...f,
-          images: [...f.images, { url: res.data.url, sort_order: f.images.length, is_primary: f.images.length === 0 }],
+          images: [...f.images, { url: uploadedUrl, sort_order: f.images.length, is_primary: f.images.length === 0 }],
         }))
         uploaded++
       } catch (err) {
