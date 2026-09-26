@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
-import { useParams, useNavigate, Link } from "react-router-dom"
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom"
 import client from "../api/client"
+import { useAuthStore } from "../store/authStore"
+import { isFavorite, toggleFavorite } from "../utils/favorites"
 
 
 const COLORS = {
@@ -17,12 +19,15 @@ const COLORS = {
 export default function ProductDetail() {
   const { idOrSlug } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const { isLoggedIn, user } = useAuthStore()
 
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [activeImg, setActiveImg] = useState(0)
   const [addedFlash, setAddedFlash] = useState(false)
+  const [isFav, setIsFav] = useState(false)
 
   // "You might also like" — other products from the same category only
   const [related, setRelated] = useState([])
@@ -38,6 +43,7 @@ export default function ProductDetail() {
         if (isMounted) {
           setProduct(res.data)
           setActiveImg(0)
+          setIsFav(isFavorite(user?.uuid, res.data.uuid))
         }
       } catch (err) {
         console.error("Failed to load product", err)
@@ -80,9 +86,26 @@ export default function ProductDetail() {
     return () => { isMounted = false }
   }, [product?.uuid, product?.category_id, product?.category?.uuid])
 
+  function requireLogin(action) {
+    if (!isLoggedIn) {
+      navigate("/login", { state: { from: location.pathname } })
+      return
+    }
+    action()
+  }
+
   function handleAddToJhola() {
-    setAddedFlash(true)
-    setTimeout(() => setAddedFlash(false), 2200)
+    requireLogin(() => {
+      setAddedFlash(true)
+      setTimeout(() => setAddedFlash(false), 2200)
+    })
+  }
+
+  function handleToggleFavorite() {
+    requireLogin(() => {
+      const next = toggleFavorite(user.uuid, product.uuid)
+      setIsFav(next.includes(product.uuid))
+    })
   }
 
   if (loading) {
@@ -148,6 +171,13 @@ export default function ProductDetail() {
                 GIR GAYA PRICE 📉 {discountPct}% OFF
               </div>
             )}
+            <button
+              onClick={handleToggleFavorite}
+              aria-label="Toggle favorite"
+              style={{ position: "absolute", top: 16, right: 16, zIndex: 2, width: 40, height: 40, borderRadius: "50%", border: "none", cursor: "pointer", background: "rgba(255,255,255,0.92)", fontSize: 18 }}
+            >
+              {isFav ? "❤️" : "🤍"}
+            </button>
             {currentImgUrl ? (
               <img src={currentImgUrl} alt={product.name} style={{ width: "100%", height: 420, objectFit: "cover", display: "block" }} />
             ) : (

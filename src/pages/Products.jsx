@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom"
 import { getProducts, getCategories } from "../api/products"
+import { useAuthStore } from "../store/authStore"
+import { getFavorites, toggleFavorite } from "../utils/favorites"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
+import BannerSlider from "../components/BannerSlider"
 
 const COLORS = {
   bg: "#FFF7EC",
@@ -30,9 +33,12 @@ const getImageUrl = (p) => {
 
 export default function Products() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { isLoggedIn, user } = useAuthStore()
 
   const [cartCount, setCartCount] = useState(0)
+  const [favorites, setFavorites] = useState(() => getFavorites(user?.uuid))
   const [toastVisible, setToastVisible] = useState(false)
   const [toastText, setToastText] = useState("")
   const [toastAnim, setToastAnim] = useState("toast-in")
@@ -134,13 +140,38 @@ export default function Products() {
     setSearchParams({})
   }
 
+  // Favorites, cart, and "Shop Now" all require an account — bounce to
+  // /login and remember where to send the customer back once they're in.
+  const requireLogin = (action) => {
+    if (!isLoggedIn) {
+      navigate("/login", { state: { from: location.pathname + location.search } })
+      return
+    }
+    action()
+  }
+
   const handleAddToCart = (e, name) => {
     e.stopPropagation()
-    setCartCount((prev) => prev + 1)
-    setToastText(`Added ${name} to Jhola! 🛍️`)
-    setToastAnim("toast-in")
-    setToastVisible(true)
-    setTimeout(() => setToastAnim("toast-out"), 3000)
+    requireLogin(() => {
+      setCartCount((prev) => prev + 1)
+      setToastText(`Added ${name} to Jhola! 🛍️`)
+      setToastAnim("toast-in")
+      setToastVisible(true)
+      setTimeout(() => setToastAnim("toast-out"), 3000)
+    })
+  }
+
+  const handleToggleFavorite = (e, product) => {
+    e.stopPropagation()
+    requireLogin(() => {
+      setFavorites(toggleFavorite(user.uuid, product.uuid || product.id))
+    })
+  }
+
+  const handleShopNow = () => {
+    requireLogin(() => {
+      document.getElementById("marketplace-grid")?.scrollIntoView({ behavior: "smooth" })
+    })
   }
 
   const radioDot = (checked) => (
@@ -159,7 +190,7 @@ export default function Products() {
       <Navbar cartCount={cartCount} />
 
       {/* PAGE HEADER */}
-      <div style={{ textAlign: "center", padding: "10px 6% 46px", position: "relative" }}>
+      <div style={{ textAlign: "center", padding: "10px 6% 30px", position: "relative" }}>
         <div style={{ display: "inline-block", fontFamily: "'Space Mono'", fontSize: 12, fontWeight: 700, background: "#FFFFFF", border: `1px dashed ${COLORS.orange}`, padding: "5px 16px", borderRadius: 999, marginBottom: 16, transform: "rotate(-1.5deg)" }}>
           🪔 POORA BAZAR, EK HI JAGAH
         </div>
@@ -167,7 +198,14 @@ export default function Products() {
         <p style={{ opacity: 0.7, marginTop: 10, fontFamily: "'Kalam', cursive", fontSize: 16 }}>Chhaan lo, chun lo, bhaav-tav bhi kar lo (thoda sa).</p>
       </div>
 
-      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 6% 100px", display: "flex", gap: 32, alignItems: "flex-start", position: "relative" }}>
+      {/* Featured promo photos — swapped out from the staff portal from time to time */}
+      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 6%" }}>
+        <BannerSlider type="promo" height={340} onShopNow={handleShopNow} />
+        {/* Sale-campaign ads (Winter Sale, Diwali Sale, etc) */}
+        <BannerSlider type="ad" height={150} onShopNow={handleShopNow} />
+      </div>
+
+      <div id="marketplace-grid" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 6% 100px", display: "flex", gap: 32, alignItems: "flex-start", position: "relative" }}>
 
         {/* ── FILTERS SIDEBAR ── */}
         <aside
@@ -335,6 +373,17 @@ export default function Products() {
                         GIR GAYA PRICE 📉
                       </div>
                     )}
+                    <button
+                      onClick={(e) => handleToggleFavorite(e, p)}
+                      aria-label="Toggle favorite"
+                      style={{
+                        position: "absolute", top: isList ? "auto" : 10, bottom: isList ? 10 : "auto", right: 10, zIndex: 1,
+                        width: 30, height: 30, borderRadius: "50%", border: "none", cursor: "pointer",
+                        background: "rgba(255,255,255,0.9)", fontSize: 15,
+                      }}
+                    >
+                      {favorites.includes(p.uuid || p.id) ? "❤️" : "🤍"}
+                    </button>
                     <div style={{ position: "relative", width: isList ? 140 : "100%", flexShrink: 0 }}>
                       {img ? (
                         <img src={img} alt={p.name} style={{ width: "100%", height: isList ? 100 : 160, objectFit: "cover", borderRadius: 12, marginBottom: isList ? 0 : 14 }} />

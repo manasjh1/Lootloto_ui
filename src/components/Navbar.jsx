@@ -24,10 +24,10 @@ export default function Navbar({ cartCount = 0 }) {
       </div>
 
       <div style={{ display: "flex", gap: 32, fontSize: 15, fontWeight: 500 }} className="nav-links-hide">
-        <Link to="/products" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>Stalls</Link>
-        <Link to="/products?filter=new" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>New Aaya</Link>
-        <Link to="/products?filter=sale" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>Sale</Link>
-        <Link to="/#slogans" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>About Bazar</Link>
+        <Link to="/" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>Stalls</Link>
+        <Link to="/?filter=new" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>New Aaya</Link>
+        <Link to="/?filter=sale" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>Sale</Link>
+        <Link to="/" style={{ textDecoration: "none", opacity: 0.85, color: "inherit" }}>About Bazar</Link>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>

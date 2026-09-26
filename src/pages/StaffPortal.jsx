@@ -2,7 +2,10 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import client from "../api/client"
 import { useAuthStore } from "../store/authStore"
+import { getBanners, createBanner, updateBanner, deleteBanner } from "../api/banners"
 import "../styles/staffPortal.css"
+
+const EMPTY_BANNER = { image_url: "", caption: "", type: "promo", is_active: true }
 
 const TAB_NAMES = ["Basics", "Category & price", "Status", "Inventory", "Images"]
 const EMPTY_FORM = {
@@ -34,6 +37,15 @@ const EMPTY_FORM = {
 export default function StaffPortal() {
   const navigate = useNavigate()
   const { user, clearUser } = useAuthStore()
+
+  // ── Section tabs ─────────────────────────────────
+  const [section, setSection] = useState("products") // "products" | "banners"
+
+  // ── Banners state ────────────────────────────────
+  const [banners, setBanners] = useState([])
+  const [bannersLoading, setBannersLoading] = useState(false)
+  const [bannerForm, setBannerForm] = useState(EMPTY_BANNER)
+  const [bannerUploading, setBannerUploading] = useState(false)
 
   // ── Catalog state ──────────────────────────────
   const [products, setProducts] = useState([])
@@ -97,6 +109,76 @@ export default function StaffPortal() {
   useEffect(() => {
     loadProducts()
   }, [loadProducts])
+
+  // ── Banners: load + CRUD ─────────────────────────
+  const loadBanners = useCallback(async () => {
+    setBannersLoading(true)
+    const [promo, ad] = await Promise.all([getBanners("promo"), getBanners("ad")])
+    setBanners([...promo, ...ad])
+    setBannersLoading(false)
+  }, [])
+
+  useEffect(() => {
+    if (section === "banners") loadBanners()
+  }, [section, loadBanners])
+
+  async function handleBannerImageUpload(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setBannerUploading(true)
+    const formData = new FormData()
+    formData.append("file", file)
+    try {
+      const res = await client.post("/catalog/upload-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 60000,
+      })
+      const url = res.data?.url || res.data?.image_url || res.data?.public_url
+      if (url) setBannerForm((f) => ({ ...f, image_url: url }))
+      else throw new Error("Backend did not return an image URL")
+    } catch (err) {
+      showToast(err.message || "Upload failed", "error")
+    } finally {
+      setBannerUploading(false)
+      e.target.value = ""
+    }
+  }
+
+  async function handleAddBanner(e) {
+    e.preventDefault()
+    if (!bannerForm.image_url) {
+      showToast("Add an image first", "error")
+      return
+    }
+    try {
+      await createBanner({ ...bannerForm, sort_order: banners.filter((b) => b.type === bannerForm.type).length })
+      showToast("Banner added!", "success")
+      setBannerForm(EMPTY_BANNER)
+      loadBanners()
+    } catch (err) {
+      showToast(err.message || "Backend doesn't support banners yet — ask a developer to add /catalog/banners", "error")
+    }
+  }
+
+  async function handleToggleBannerActive(b) {
+    try {
+      await updateBanner(b.uuid, { is_active: !b.is_active })
+      loadBanners()
+    } catch (err) {
+      showToast(err.message || "Update failed", "error")
+    }
+  }
+
+  async function handleDeleteBanner(uuid) {
+    if (!confirm("Remove this banner?")) return
+    try {
+      await deleteBanner(uuid)
+      showToast("Banner removed", "success")
+      loadBanners()
+    } catch (err) {
+      showToast(err.message || "Delete failed", "error")
+    }
+  }
 
   // debounce search typing
   function onSearchChange(v) {
@@ -353,73 +435,156 @@ export default function StaffPortal() {
           </div>
         </div>
 
-        {/* Hero Header */}
-        <div className="h-hero">
-          <div>
-            <div className="kicker">Catalog</div>
-            <h1 className="h1">{total} product{total !== 1 ? "s" : ""}</h1>
-            <p className="h-sub">Catalog inventory dashboard. Add or edit items using the side panel.</p>
-          </div>
-          <button className="btn btn-primary" onClick={openSheetNew}>＋ New product</button>
+        {/* Section Tabs */}
+        <div className="chips" style={{ marginBottom: 24 }}>
+          <button className="chip" aria-pressed={section === "products"} onClick={() => setSection("products")}>📦 Products</button>
+          <button className="chip" aria-pressed={section === "banners"} onClick={() => setSection("banners")}>🖼️ Banners</button>
         </div>
 
-        {/* Filter Chips */}
-        <div className="chips">
-          <button className="chip" aria-pressed={activeFilter === "all"} onClick={() => setActiveFilter("all")}>All · {total}</button>
-          <button className="chip" aria-pressed={activeFilter === "pub"} onClick={() => setActiveFilter("pub")}>Published · {pubCount}</button>
-          <button className="chip warn" aria-pressed={activeFilter === "low"} onClick={() => setActiveFilter("low")}>Low stock · {lowCount}</button>
-          <button className="chip" aria-pressed={activeFilter === "cat"} onClick={() => setActiveFilter("cat")}>Categories · {categories.length}</button>
-        </div>
+        {section === "products" ? (
+          <>
+            {/* Hero Header */}
+            <div className="h-hero">
+              <div>
+                <div className="kicker">Catalog</div>
+                <h1 className="h1">{total} product{total !== 1 ? "s" : ""}</h1>
+                <p className="h-sub">Catalog inventory dashboard. Add or edit items using the side panel.</p>
+              </div>
+              <button className="btn btn-primary" onClick={openSheetNew}>＋ New product</button>
+            </div>
 
-        {/* Search & Toolbar */}
-        <div className="toolbar">
-          <div className="search field" style={{ margin: 0, flex: 1 }}>
-            <input className="input" placeholder="Search by name, SKU, brand…" onChange={(e) => onSearchChange(e.target.value)} />
-          </div>
-          <select className="input" style={{ width: 200 }} value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
-            <option value="">All categories</option>
-            {categories.map((c) => <option key={c.uuid} value={c.uuid}>{c.name}</option>)}
-          </select>
-        </div>
+            {/* Filter Chips */}
+            <div className="chips">
+              <button className="chip" aria-pressed={activeFilter === "all"} onClick={() => setActiveFilter("all")}>All · {total}</button>
+              <button className="chip" aria-pressed={activeFilter === "pub"} onClick={() => setActiveFilter("pub")}>Published · {pubCount}</button>
+              <button className="chip warn" aria-pressed={activeFilter === "low"} onClick={() => setActiveFilter("low")}>Low stock · {lowCount}</button>
+              <button className="chip" aria-pressed={activeFilter === "cat"} onClick={() => setActiveFilter("cat")}>Categories · {categories.length}</button>
+            </div>
 
-        {/* Product Catalog Table */}
-        <div className="catalog">
-          <div className="row head">
-            <div>Image</div>
-            <div>Name & SKU</div>
-            <div className="col-cat">Category</div>
-            <div>Price</div>
-            <div className="col-stock">Stock</div>
-            <div className="col-status">Status</div>
-            <div style={{ textAlign: "right" }}>Actions</div>
-          </div>
-          {products.length === 0 ? (
-            <div className="empty">No products match. Click <strong>＋ New product</strong> to add one!</div>
-          ) : (
-            products.map((p) => {
-              const thumb = p.images?.length > 0 ? (p.images.find((i) => i.is_primary) || p.images[0]).url : "https://via.placeholder.com/56?text=No+Img"
-              const catName = p.category?.name || "Uncategorized"
-              const isLow = p.status === "LOW_STOCK" || p.status === "OUT_OF_STOCK"
-              return (
-                <div className="row" key={p.uuid}>
-                  <div className="thumb"><img src={thumb} alt="" /></div>
-                  <div>
-                    <div className="p-name">{p.name}</div>
-                    <div className="p-sku">SKU · {p.sku}</div>
-                  </div>
-                  <div className="col-cat"><span className="tag tag-outline">{catName}</span></div>
-                  <div className="price">₹{Number(p.selling_price).toFixed(2)}</div>
-                  <div className="col-stock">{p.current_qty}</div>
-                  <div className="col-status"><span className={`status-tag ${isLow ? "low" : ""}`}>{p.status.replace("_", " ")}</span></div>
-                  <div className="row-actions">
-                    <button className="btn" onClick={() => editProduct(p.uuid)}>Edit</button>
-                    <button className="btn btn-danger" onClick={() => deleteProduct(p.uuid)}>Delete</button>
-                  </div>
+            {/* Search & Toolbar */}
+            <div className="toolbar">
+              <div className="search field" style={{ margin: 0, flex: 1 }}>
+                <input className="input" placeholder="Search by name, SKU, brand…" onChange={(e) => onSearchChange(e.target.value)} />
+              </div>
+              <select className="input" style={{ width: 200 }} value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+                <option value="">All categories</option>
+                {categories.map((c) => <option key={c.uuid} value={c.uuid}>{c.name}</option>)}
+              </select>
+            </div>
+
+            {/* Product Catalog Table */}
+            <div className="catalog">
+              <div className="row head">
+                <div>Image</div>
+                <div>Name & SKU</div>
+                <div className="col-cat">Category</div>
+                <div>Price</div>
+                <div className="col-stock">Stock</div>
+                <div className="col-status">Status</div>
+                <div style={{ textAlign: "right" }}>Actions</div>
+              </div>
+              {products.length === 0 ? (
+                <div className="empty">No products match. Click <strong>＋ New product</strong> to add one!</div>
+              ) : (
+                products.map((p) => {
+                  const thumb = p.images?.length > 0 ? (p.images.find((i) => i.is_primary) || p.images[0]).url : "https://via.placeholder.com/56?text=No+Img"
+                  const catName = p.category?.name || "Uncategorized"
+                  const isLow = p.status === "LOW_STOCK" || p.status === "OUT_OF_STOCK"
+                  return (
+                    <div className="row" key={p.uuid}>
+                      <div className="thumb"><img src={thumb} alt="" /></div>
+                      <div>
+                        <div className="p-name">{p.name}</div>
+                        <div className="p-sku">SKU · {p.sku}</div>
+                      </div>
+                      <div className="col-cat"><span className="tag tag-outline">{catName}</span></div>
+                      <div className="price">₹{Number(p.selling_price).toFixed(2)}</div>
+                      <div className="col-stock">{p.current_qty}</div>
+                      <div className="col-status"><span className={`status-tag ${isLow ? "low" : ""}`}>{p.status.replace("_", " ")}</span></div>
+                      <div className="row-actions">
+                        <button className="btn" onClick={() => editProduct(p.uuid)}>Edit</button>
+                        <button className="btn btn-danger" onClick={() => deleteProduct(p.uuid)}>Delete</button>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Banners Header */}
+            <div className="h-hero">
+              <div>
+                <div className="kicker">Marketing</div>
+                <h1 className="h1">{banners.length} banner{banners.length !== 1 ? "s" : ""}</h1>
+                <p className="h-sub">Promo photo slider + sale-campaign ads shown on the marketplace. Swap these out any time.</p>
+              </div>
+            </div>
+
+            {/* Add banner form */}
+            <form onSubmit={handleAddBanner} className="catalog" style={{ padding: 20, marginBottom: 24 }}>
+              <div className="grid-2">
+                <div className="field">
+                  <label>Slide type</label>
+                  <select className="input" value={bannerForm.type} onChange={(e) => setBannerForm((f) => ({ ...f, type: e.target.value }))}>
+                    <option value="promo">Featured promo photo (big slider)</option>
+                    <option value="ad">Sale campaign ad (Winter Sale, Diwali Sale...)</option>
+                  </select>
                 </div>
-              )
-            })
-          )}
-        </div>
+                <div className="field">
+                  <label>Caption</label>
+                  <input className="input" value={bannerForm.caption} onChange={(e) => setBannerForm((f) => ({ ...f, caption: e.target.value }))} placeholder="e.g. Diwali Dhamaka — 40% Off" />
+                </div>
+              </div>
+              <div className="field">
+                <label>Image {bannerForm.image_url && "✓"}</label>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <label className="btn" style={{ cursor: "pointer" }}>
+                    {bannerUploading ? "Uploading..." : "📁 Upload image"}
+                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleBannerImageUpload} disabled={bannerUploading} />
+                  </label>
+                  {bannerForm.image_url && (
+                    <img src={bannerForm.image_url} alt="" style={{ width: 60, height: 40, objectFit: "cover", borderRadius: 8 }} />
+                  )}
+                </div>
+              </div>
+              <button type="submit" className="btn btn-primary">＋ Add banner</button>
+            </form>
+
+            {/* Banner list */}
+            <div className="catalog">
+              <div className="row head">
+                <div>Image</div>
+                <div>Caption & type</div>
+                <div className="col-status">Status</div>
+                <div style={{ textAlign: "right" }}>Actions</div>
+              </div>
+              {bannersLoading ? (
+                <div className="empty">Loading banners...</div>
+              ) : banners.length === 0 ? (
+                <div className="empty">No banners yet — add one above.<br /><span style={{ fontSize: 12, opacity: 0.7 }}>(Needs a <code>/catalog/banners</code> backend endpoint — ask a developer if this stays empty after adding one.)</span></div>
+              ) : (
+                banners.map((b) => (
+                  <div className="row" key={b.uuid} style={{ gridTemplateColumns: "72px 1fr 120px 160px" }}>
+                    <div className="thumb"><img src={b.image_url} alt="" /></div>
+                    <div>
+                      <div className="p-name">{b.caption || "(no caption)"}</div>
+                      <div className="p-sku">{b.type === "promo" ? "Featured promo" : "Sale ad"}</div>
+                    </div>
+                    <div className="col-status">
+                      <span className={`status-tag ${b.is_active ? "" : "low"}`}>{b.is_active ? "Live" : "Hidden"}</span>
+                    </div>
+                    <div className="row-actions">
+                      <button className="btn" onClick={() => handleToggleBannerActive(b)}>{b.is_active ? "Hide" : "Show"}</button>
+                      <button className="btn btn-danger" onClick={() => handleDeleteBanner(b.uuid)}>Delete</button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Side Sheet */}

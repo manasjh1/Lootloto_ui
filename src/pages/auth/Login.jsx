@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { loginUser } from "../../api/auth"
 import { useAuthStore } from "../../store/authStore"
 
@@ -13,6 +13,7 @@ export default function Login() {
 
   const { setSession } = useAuthStore()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -34,11 +35,13 @@ export default function Login() {
           email: data.email_id || email,
         }
         setSession(data.access_token, user, remember)
-        // Role-based landing: staff/admin go straight to their portal,
-        // everyone else goes to the storefront.
+        // Role-based landing: staff/admin go straight to their portal.
+        // Everyone else returns to wherever they were trying to go (e.g.
+        // Shop Now / favorites / add-to-cart bounced them here) or the
+        // marketplace if they arrived here directly.
         if (user.role === "admin") navigate("/admin")
         else if (user.role === "staff") navigate("/staff")
-        else navigate("/")
+        else navigate(location.state?.from || "/")
       } else {
         setError("Invalid response from server.")
       }
@@ -82,18 +85,18 @@ export default function Login() {
   }, [])
 
   return (
-    <div style={{ background: "#181030", color: "#F7EEDD", fontFamily: "'DM Sans', sans-serif", minHeight: "100vh", overflowX: "hidden", position: "relative" }} id="stage">
+    <div style={{ background: "#FFF7EC", color: "#181030", fontFamily: "'DM Sans', sans-serif", minHeight: "100vh", overflowX: "hidden", position: "relative" }} id="stage">
       
       {/* Glow Circles */}
       <div style={{ position: "absolute", top: 120, left: -140, width: 380, height: 380, borderRadius: "50%", background: "radial-gradient(circle at 30% 30%, #FF7A1A55, transparent 60%)", filter: "blur(6px)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 420, right: -160, width: 420, height: 420, borderRadius: "50%", background: "radial-gradient(circle at 60% 40%, #F0177B44, transparent 60%)", filter: "blur(8px)", pointerEvents: "none" }} />
 
       {/* TOP MARQUEE TICKER */}
-      <div style={{ background: "#0f0a22", borderBottom: "1px solid rgba(255,201,74,0.18)", position: "relative" }}>
-        <div style={{ background: "#181030", color: "#F7EEDD", overflow: "hidden", whiteSpace: "nowrap", padding: "11px 0", borderBottom: "1px solid rgba(255,201,74,0.14)", position: "relative" }}>
-          <div style={{ position: "absolute", inset: "0 auto 0 0", width: 80, background: "linear-gradient(90deg,#181030,transparent)", zIndex: 2, pointerEvents: "none" }} />
-          <div style={{ position: "absolute", inset: "0 0 0 auto", width: 80, background: "linear-gradient(270deg,#181030,transparent)", zIndex: 2, pointerEvents: "none" }} />
-          
+      <div style={{ background: "#FFEFDA", borderBottom: "1px solid rgba(255,122,26,0.25)", position: "relative" }}>
+        <div style={{ background: "#FFFFFF", color: "#181030", overflow: "hidden", whiteSpace: "nowrap", padding: "11px 0", borderBottom: "1px solid rgba(255,201,74,0.4)", position: "relative" }}>
+          <div style={{ position: "absolute", inset: "0 auto 0 0", width: 80, background: "linear-gradient(90deg,#FFFFFF,transparent)", zIndex: 2, pointerEvents: "none" }} />
+          <div style={{ position: "absolute", inset: "0 0 0 auto", width: 80, background: "linear-gradient(270deg,#FFFFFF,transparent)", zIndex: 2, pointerEvents: "none" }} />
+
           <div style={{ display: "inline-block", willChange: "transform", animation: "scroll-left 40s linear infinite", fontFamily: "'Space Mono', monospace", fontWeight: 700, fontSize: 14, letterSpacing: "0.6px" }}>
             {[...quirkyLines, ...quirkyLines, ...quirkyLines].map((line, idx) => (
               <React.Fragment key={idx}>
@@ -106,10 +109,10 @@ export default function Login() {
 
         {/* Shanivaar Special Bar */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, padding: "10px 6%", flexWrap: "wrap" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: "#FFC94A", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: "#FF7A1A", fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>
             Shanivaar Special
           </span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", border: "1px solid rgba(255,201,74,0.35)", borderRadius: 999, fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 14, color: "#F7EEDD" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", border: "1px solid rgba(255,122,26,0.4)", borderRadius: 999, fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 14, color: "#181030" }}>
             <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: "#0B6E4F", boxShadow: "0 0 0 3px rgba(11,110,79,0.28)", animation: "dot-pulse 1.4s ease-in-out infinite" }} />
             Sign in to claim <span style={{ color: "#FF7A1A", fontWeight: 800 }}>40% Off</span>
           </span>
@@ -119,13 +122,13 @@ export default function Login() {
       {/* NAVBAR HEADER */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 6%", position: "relative", zIndex: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/")}>
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "conic-gradient(from 90deg,#F0177B,#FF7A1A,#FFC94A,#F0177B)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Baloo 2'", fontWeight: 800, fontSize: 17, color: "#181030", transform: "rotate(-8deg)", border: "3px solid #F7EEDD", boxShadow: "3px 3px 0 #F0177B" }}>LL</div>
-          <div style={{ fontSize: 23, fontWeight: 800, letterSpacing: "0.5px" }}>LOOT<span style={{ color: "#FFC94A" }}>LOOTO</span></div>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "conic-gradient(from 90deg,#F0177B,#FF7A1A,#FFC94A,#F0177B)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Baloo 2'", fontWeight: 800, fontSize: 17, color: "#181030", transform: "rotate(-8deg)", border: "3px solid #181030", boxShadow: "3px 3px 0 #F0177B" }}>LL</div>
+          <div style={{ fontSize: 23, fontWeight: 800, letterSpacing: "0.5px" }}>LOOT<span style={{ color: "#FF7A1A" }}>LOOTO</span></div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <span style={{ fontSize: 14, opacity: 0.8 }} className="nav-links-hide">Naya customer ho?</span>
-          <Link to="/signup" style={{ fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 14, padding: "8px 20px", borderRadius: 999, textDecoration: "none", background: "transparent", color: "#FFC94A", border: "2px solid #FFC94A" }}>
+          <Link to="/signup" style={{ fontFamily: "'Baloo 2'", fontWeight: 700, fontSize: 14, padding: "8px 20px", borderRadius: 999, textDecoration: "none", background: "transparent", color: "#FF7A1A", border: "2px solid #FF7A1A" }}>
             Create Account 🛍️
           </Link>
         </div>
@@ -164,12 +167,12 @@ export default function Login() {
               "beta login kar lo, warna favourite deal miss ho jaayegi" — aunty wisdom
             </div>
 
-            <div style={{ display: "inline-block", fontFamily: "'Space Mono'", fontSize: 12, fontWeight: 700, background: "#241a45", border: "1px dashed #FFC94A", color: "#FFC94A", padding: "6px 16px", borderRadius: 999, marginBottom: 20 }}>
+            <div style={{ display: "inline-block", fontFamily: "'Space Mono'", fontSize: 12, fontWeight: 700, background: "#FFFFFF", border: "1px dashed #FF7A1A", color: "#181030", padding: "6px 16px", borderRadius: 999, marginBottom: 20 }}>
               📍 1-CLICK AUTH FOR MAX BHAAV DISCOUNT
             </div>
 
             <h1 style={{ fontFamily: "'Baloo 2'", fontSize: "clamp(38px,6vw,68px)", lineHeight: 1.15, fontWeight: 800, margin: "0 0 16px" }}>
-              BAZAR ME <span style={{ color: "#FF7A1A", WebkitTextStroke: "1px #F7EEDD" }}>WAPAS</span><br />
+              BAZAR ME <span style={{ color: "#FF7A1A", WebkitTextStroke: "1px #181030" }}>WAPAS</span><br />
               AAO! <span style={{ color: "#F0177B" }}>SHOP SLAY 🛍️</span>
             </h1>
 
@@ -178,7 +181,7 @@ export default function Login() {
               <div style={{ fontFamily: "'Baloo 2'", fontWeight: 800, fontSize: 16, color: "#F0177B", border: "4px double #F0177B", padding: "4px 12px", borderRadius: 6, letterSpacing: 2, transform: "rotate(-12deg)", animation: "stamp-in 0.8s ease-out both", textShadow: "1px 1px 0 rgba(240,23,123,0.2)", display: "inline-block", flexShrink: 0 }}>
                 AUNTY<br />APPROVED
               </div>
-              <div style={{ fontFamily: "'Kalam', cursive", fontSize: 20, color: "#FFC94A" }}>
+              <div style={{ fontFamily: "'Kalam', cursive", fontSize: 20, color: "#FF7A1A" }}>
                 *sasta, sundar, slay login ✨
               </div>
             </div>
@@ -189,7 +192,7 @@ export default function Login() {
           </div>
 
           {/* RIGHT FORM CARD */}
-          <div style={{ background: "#241a45", border: "2px solid rgba(247,238,221,0.18)", borderRadius: 24, padding: "36px 32px", boxShadow: "6px 6px 0 #F0177B", position: "relative" }}>
+          <div style={{ background: "#FFFFFF", border: "2px solid rgba(24,16,48,0.1)", borderRadius: 24, padding: "36px 32px", boxShadow: "6px 6px 0 #F0177B", position: "relative" }}>
             
             <div style={{ marginBottom: 28, textAlign: "center" }}>
               <h2 style={{ fontFamily: "'Baloo 2'", fontSize: 30, fontWeight: 800, margin: "0 0 6px" }}>Sign in to LootLooto</h2>
@@ -197,7 +200,7 @@ export default function Login() {
             </div>
 
             {error && (
-              <div style={{ background: "rgba(240,23,123,0.15)", border: "1.5px solid #F0177B", color: "#F7EEDD", borderRadius: 12, padding: "12px 16px", fontSize: 13, marginBottom: 22, display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ background: "rgba(240,23,123,0.12)", border: "1.5px solid #F0177B", color: "#181030", borderRadius: 12, padding: "12px 16px", fontSize: 13, marginBottom: 22, display: "flex", alignItems: "center", gap: 10 }}>
                 <span>⚠️</span>
                 <span>{error}</span>
               </div>
@@ -207,40 +210,40 @@ export default function Login() {
               
               {/* Email */}
               <div>
-                <label style={{ display: "block", fontFamily: "'Space Mono'", fontSize: 11, fontWeight: 700, color: "#FFC94A", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>
+                <label style={{ display: "block", fontFamily: "'Space Mono'", fontSize: 11, fontWeight: 700, color: "#FF7A1A", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>
                   EMAIL ADDRESS
                 </label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="aunty@lootlooto.com"
                   required
-                  style={{ width: "100%", padding: "14px 16px", background: "#181030", border: "1.5px solid rgba(247,238,221,0.2)", borderRadius: 12, color: "#F7EEDD", fontSize: 15, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
+                  style={{ width: "100%", padding: "14px 16px", background: "#FFEFDA", border: "1.5px solid rgba(24,16,48,0.15)", borderRadius: 12, color: "#181030", fontSize: 15, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
                 />
               </div>
 
               {/* Password */}
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <label style={{ fontFamily: "'Space Mono'", fontSize: 11, fontWeight: 700, color: "#FFC94A", letterSpacing: 1, textTransform: "uppercase" }}>
+                  <label style={{ fontFamily: "'Space Mono'", fontSize: 11, fontWeight: 700, color: "#FF7A1A", letterSpacing: 1, textTransform: "uppercase" }}>
                     PASSWORD
                   </label>
-                  <a href="#" style={{ fontSize: 12, color: "#F7EEDD", opacity: 0.7, textDecoration: "underline" }}>Forgot?</a>
+                  <a href="#" style={{ fontSize: 12, color: "#181030", opacity: 0.6, textDecoration: "underline" }}>Forgot?</a>
                 </div>
                 <div style={{ position: "relative" }}>
-                  <input 
-                    type={showPassword ? "text" : "password"} 
+                  <input
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    style={{ width: "100%", padding: "14px 44px 14px 16px", background: "#181030", border: "1.5px solid rgba(247,238,221,0.2)", borderRadius: 12, color: "#F7EEDD", fontSize: 15, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
+                    style={{ width: "100%", padding: "14px 44px 14px 16px", background: "#FFEFDA", border: "1.5px solid rgba(24,16,48,0.15)", borderRadius: 12, color: "#181030", fontSize: 15, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
                   />
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#F7EEDD", opacity: 0.7, cursor: "pointer", fontSize: 14 }}
+                    style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#181030", opacity: 0.6, cursor: "pointer", fontSize: 14 }}
                   >
                     {showPassword ? "🙈" : "👁️"}
                   </button>
@@ -277,20 +280,20 @@ export default function Login() {
               </button>
 
               {/* Divider */}
-              <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "10px 0", opacity: 0.5 }}>
-                <div style={{ flex: 1, height: 1, background: "#F7EEDD" }} />
+              <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "10px 0", opacity: 0.6 }}>
+                <div style={{ flex: 1, height: 1, background: "rgba(24,16,48,0.15)" }} />
                 <span style={{ fontSize: 11, fontFamily: "'Space Mono'" }}>OR</span>
-                <div style={{ flex: 1, height: 1, background: "#F7EEDD" }} />
+                <div style={{ flex: 1, height: 1, background: "rgba(24,16,48,0.15)" }} />
               </div>
 
               {/* Social Login Buttons */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <button type="button" style={{ background: "#181030", border: "1.5px solid rgba(247,238,221,0.2)", borderRadius: 12, padding: "10px", color: "#F7EEDD", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <button type="button" style={{ background: "#FFEFDA", border: "1.5px solid rgba(24,16,48,0.15)", borderRadius: 12, padding: "10px", color: "#181030", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .55 4.1 1.6l3-3C17.3 1.9 14.8 1 12 1 7.7 1 3.99 3.47 2.2 7.07l3.5 2.72C6.55 7.09 9.05 5 12 5Z"/><path fill="#34A853" d="M23 12c0-.8-.07-1.57-.2-2.3H12v4.4h6.19c-.27 1.43-1.08 2.63-2.3 3.44l3.55 2.75C21.55 18.34 23 15.42 23 12Z"/><path fill="#4A90E2" d="M5.7 14.28c-.22-.65-.35-1.35-.35-2.28s.13-1.63.35-2.28L2.2 7C1.44 8.5 1 10.2 1 12s.44 3.5 1.2 5l3.5-2.72Z"/><path fill="#FBBC05" d="M12 23c3 0 5.5-.99 7.34-2.71l-3.55-2.75c-.99.66-2.26 1.06-3.79 1.06-2.95 0-5.45-2.09-6.3-4.79L2.2 16.53C3.99 20.53 7.7 23 12 23Z"/></svg>
                   Google
                 </button>
-                <button type="button" style={{ background: "#181030", border: "1.5px solid rgba(247,238,221,0.2)", borderRadius: 12, padding: "10px", color: "#F7EEDD", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#F7EEDD"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg>
+                <button type="button" style={{ background: "#FFEFDA", border: "1.5px solid rgba(24,16,48,0.15)", borderRadius: 12, padding: "10px", color: "#181030", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#181030"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg>
                   Apple
                 </button>
               </div>
@@ -299,7 +302,7 @@ export default function Login() {
 
             <div style={{ marginTop: 24, textAlign: "center", fontSize: 14 }}>
               <span opacity={0.7}>Account nahi hai? </span>
-              <Link to="/signup" style={{ color: "#FFC94A", fontWeight: 700, textDecoration: "underline" }}>
+              <Link to="/signup" style={{ color: "#FF7A1A", fontWeight: 700, textDecoration: "underline" }}>
                 Naya Account Banayo 🛍️
               </Link>
             </div>
@@ -311,8 +314,8 @@ export default function Login() {
       </main>
 
       {/* FOOTER */}
-      <footer style={{ textAlign: "center", padding: "40px 6% 30px", borderTop: "1px solid rgba(247,238,221,0.14)", fontSize: 13, opacity: 0.65 }}>
-        <div style={{ fontFamily: "'Baloo 2'", fontSize: 20, color: "#FFC94A", marginBottom: 6 }}>LOOTLOOTO</div>
+      <footer style={{ textAlign: "center", padding: "40px 6% 30px", borderTop: "1px solid rgba(24,16,48,0.12)", fontSize: 13, opacity: 0.65 }}>
+        <div style={{ fontFamily: "'Baloo 2'", fontSize: 20, color: "#FF7A1A", marginBottom: 6 }}>LOOTLOOTO</div>
         <div style={{ fontFamily: "'Kalam', cursive", fontSize: 15 }}>Bazar band nahi hota, bas tab bandh hota hai jab paisa khatam ho jaaye.</div>
       </footer>
 
