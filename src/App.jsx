@@ -3,6 +3,7 @@ import Signup        from "./pages/auth/Signup"
 import Login         from "./pages/auth/Login"
 import VerifyEmail   from "./pages/auth/VerifyEmail"
 import Home          from "./pages/Home"
+import Products      from "./pages/Products"
 import ProductDetail from "./pages/ProductDetail"
 import StaffPortal   from "./pages/StaffPortal"
 import AdminPortal   from "./pages/AdminPortal"
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/signup"       element={<Signup />} />
         <Route path="/login"        element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/products"     element={<Products />} />
         <Route path="/product/:idOrSlug" element={<ProductDetail />} />
         <Route
           path="/staff"

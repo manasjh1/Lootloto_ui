@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuthStore } from "../store/authStore"
-import { logoutUser } from "../api/auth"
+import { useNavigate } from "react-router-dom"
 import { getProducts } from "../api/products"
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 export default function Home() {
   const [cartCount, setCartCount] = useState(0)
@@ -16,18 +16,7 @@ export default function Home() {
   const [backendProducts, setBackendProducts] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
 
-  const { isLoggedIn, clearUser, user } = useAuthStore()
   const navigate = useNavigate()
-
-  const handleLogout = async () => {
-    try {
-      await logoutUser()
-    } catch (err) {
-      console.error(err)
-    }
-    clearUser()
-    navigate("/")
-  }
 
   // Fetch backend uploaded products
   useEffect(() => {
@@ -332,36 +321,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* NAVBAR */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 6%", position: "relative" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/")}>
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "conic-gradient(from 90deg,#F0177B,#FF7A1A,#FFC94A,#F0177B)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Baloo 2'", fontWeight: 800, fontSize: 17, color: "#181030", transform: "rotate(-8deg)", border: "3px solid #181030", boxShadow: "3px 3px 0 #F0177B" }}>LL</div>
-          <div style={{ fontSize: 23, fontWeight: 800, letterSpacing: "0.5px" }}>LOOT<span style={{ color: "#FF7A1A" }}>LOOTO</span></div>
-        </div>
-
-        <div style={{ display: "flex", gap: 32, fontSize: 15, fontWeight: 500 }} className="nav-links-hide">
-          <a href="#products" style={{ textDecoration: "none", opacity: 0.85 }}>Stalls</a>
-          <a href="#products" style={{ textDecoration: "none", opacity: 0.85 }}>New Aaya</a>
-          <a href="#products" style={{ textDecoration: "none", opacity: 0.85 }}>Sale</a>
-          <a href="#slogans" style={{ textDecoration: "none", opacity: 0.85 }}>About Bazar</a>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          {isLoggedIn ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 13, fontFamily: "'Space Mono'", color: "#FF7A1A" }}>{user?.email || "User"}</span>
-              <button onClick={handleLogout} style={{ background: "transparent", color: "#181030", border: "1px solid rgba(24,16,48,0.3)", padding: "6px 14px", borderRadius: 999, fontSize: 12, cursor: "pointer" }}>Logout</button>
-            </div>
-          ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <Link to="/login" style={{ textDecoration: "none", color: "#181030", fontSize: 13, fontWeight: 600, padding: "6px 12px" }}>Login</Link>
-            </div>
-          )}
-          <button style={{ background: "#F0177B", color: "#F7EEDD", border: "3px solid #181030", padding: "10px 22px", borderRadius: 999, fontFamily: "'Space Mono'", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "4px 4px 0 #FFC94A" }}>
-            JHOLA ({cartCount}) 🛒
-          </button>
-        </div>
-      </nav>
+      <Navbar cartCount={cartCount} />
 
       {/* HERO SECTION */}
       <section style={{ position: "relative", padding: "90px 6% 110px", textAlign: "center", maxWidth: 1040, margin: "0 auto" }}>
@@ -523,12 +483,7 @@ export default function Home() {
         ))}
       </div>
 
-      {/* FOOTER */}
-      <footer style={{ textAlign: "center", padding: "60px 6% 44px", borderTop: "1px solid rgba(24,16,48,0.12)", fontSize: 13, opacity: 0.65 }}>
-        <div style={{ fontFamily: "'Baloo 2'", fontSize: 22, opacity: 1, marginBottom: 12, color: "#FF7A1A" }}>LOOTLOOTO</div>
-        <div style={{ fontFamily: "'Kalam', cursive", fontSize: 16, opacity: 0.85 }}>Bazar band nahi hota, bas tab bandh hota hai jab paisa khatam ho jaaye.</div>
-        <div style={{ marginTop: 16 }}>© 2026 Lootlooto · running on jugaad, not just js</div>
-      </footer>
+      <Footer />
 
       {/* BUYER TOAST NOTIFICATION */}
       {toastVisible && (

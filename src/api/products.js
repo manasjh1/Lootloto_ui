@@ -1,9 +1,9 @@
 import client from "./client"
 
 // Fetch products from backend catalog
-export const getProducts = async () => {
+export const getProducts = async (params = {}) => {
   try {
-    const res = await client.get("/catalog/products", { timeout: 3000 })
+    const res = await client.get("/catalog/products", { params: { page_size: 100, ...params }, timeout: 5000 })
     const data = res.data
 
     // Backend returns { items: [...], total: N, ... }
@@ -21,6 +21,16 @@ export const getProducts = async () => {
     return null
   } catch {
     return null
+  }
+}
+
+// Fetch catalog categories
+export const getCategories = async () => {
+  try {
+    const res = await client.get("/catalog/categories", { timeout: 5000 })
+    return Array.isArray(res.data) ? res.data : []
+  } catch {
+    return []
   }
 }
 
